@@ -15,19 +15,19 @@ export function Sidebar({ className }: { className?: string }) {
               <Home className="mr-2 h-4 w-4" />
               Dashboard
             </Button>
-            <Button variant="ghost" className="w-full justify-start">
+            <Button variant="ghost" className="w-full justify-start hover:bg-white/10">
               <ShoppingCart className="mr-2 h-4 w-4" />
               Orders
             </Button>
-            <Button variant="ghost" className="w-full justify-start">
+            <Button variant="ghost" className="w-full justify-start hover:bg-white/10">
               <Package className="mr-2 h-4 w-4" />
               Products
             </Button>
-            <Button variant="ghost" className="w-full justify-start">
+            <Button variant="ghost" className="w-full justify-start hover:bg-white/10">
               <Users className="mr-2 h-4 w-4" />
               Customers
             </Button>
-            <Button variant="ghost" className="w-full justify-start">
+            <Button variant="ghost" className="w-full justify-start hover:bg-white/10">
               <LineChart className="mr-2 h-4 w-4" />
               Analytics
             </Button>

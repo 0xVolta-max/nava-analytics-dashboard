@@ -40,6 +40,7 @@ export function DatePicker() {
             day_selected:
               "bg-orange-600 text-primary-foreground hover:bg-orange-600/90 focus:bg-orange-600",
             day_today: "bg-accent text-accent-foreground",
+            day: "hover:bg-white/10",
           }}
         />
       </PopoverContent>

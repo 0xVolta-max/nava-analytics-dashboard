@@ -46,7 +46,7 @@ const DashboardPage = () => {
               </div>
               <div className="flex items-center space-x-2">
                 <DatePicker />
-                <Button className="bg-orange-600 hover:bg-orange-700">Download</Button>
+                <Button className="bg-orange-600 hover:bg-orange-500">Download</Button>
               </div>
             </div>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
