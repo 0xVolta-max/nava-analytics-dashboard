@@ -4,14 +4,14 @@ import { Home, ShoppingCart, Package, Users, LineChart } from "lucide-react";
 
 export function Sidebar({ className }: { className?: string }) {
   return (
-    <div className={cn("pb-12 border-r", className)}>
+    <div className={cn("pb-12 border-r border-orange-400/20 bg-black/30 backdrop-blur-lg", className)}>
       <div className="space-y-4 py-4">
         <div className="px-3 py-2">
           <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
             Nava
           </h2>
           <div className="space-y-1">
-            <Button variant="secondary" className="w-full justify-start">
+            <Button variant="ghost" className="w-full justify-start bg-orange-600 text-white hover:bg-orange-700 hover:text-white">
               <Home className="mr-2 h-4 w-4" />
               Dashboard
             </Button>

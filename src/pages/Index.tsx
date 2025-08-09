@@ -15,13 +15,15 @@ import { StatCard } from "@/components/dashboard/StatCard"
 import { UserNav } from "@/components/dashboard/UserNav"
 import { DollarSign, Users, CreditCard, Activity, Search } from "lucide-react"
 
+const cardClassName = "bg-black/30 backdrop-blur-lg border border-orange-400/20";
+
 const DashboardPage = () => {
   return (
     <>
       <div className="hidden md:flex h-screen w-full">
         <Sidebar className="w-64" />
         <div className="flex-1 flex flex-col">
-          <header className="border-b">
+          <header className="border-b border-orange-400/20 bg-black/30 backdrop-blur-lg">
             <div className="flex h-16 items-center px-8">
               <div className="ml-auto flex items-center space-x-4">
                 <div className="relative ml-auto flex-1 md:grow-0">
@@ -29,7 +31,7 @@ const DashboardPage = () => {
                   <Input
                     type="search"
                     placeholder="Search..."
-                    className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[336px]"
+                    className="w-full rounded-lg bg-transparent pl-8 md:w-[200px] lg:w-[336px] border-orange-800 focus:border-orange-600"
                   />
                 </div>
                 <UserNav />
@@ -39,42 +41,46 @@ const DashboardPage = () => {
           <main className="flex-1 space-y-4 p-8 pt-6 overflow-y-auto">
             <div className="flex items-center justify-between space-y-2">
               <div>
-                <h2 className="text-3xl font-bold tracking-tight">Hello Shahrukh 👋</h2>
+                <h2 className="text-3xl font-bold tracking-tight">Hello Admin User 👋</h2>
                 <p className="text-muted-foreground">Here's a list of your stats for today!</p>
               </div>
               <div className="flex items-center space-x-2">
                 <DatePicker />
-                <Button>Download</Button>
+                <Button className="bg-orange-600 hover:bg-orange-700">Download</Button>
               </div>
             </div>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               <StatCard
+                className={cardClassName}
                 title="Total Revenue"
-                value="$45,231.89"
+                value="$700.00"
                 icon={DollarSign}
                 description="+20.1% from last month"
               />
               <StatCard
-                title="Subscriptions"
-                value="+2350"
+                className={cardClassName}
+                title="Customers"
+                value="+3"
                 icon={Users}
-                description="+180.1% from last month"
+                description="+100% from last month"
               />
               <StatCard
+                className={cardClassName}
                 title="Sales"
-                value="+12,234"
+                value="+4"
                 icon={CreditCard}
                 description="+19% from last month"
               />
               <StatCard
+                className={cardClassName}
                 title="Active Now"
-                value="+573"
+                value="+12"
                 icon={Activity}
-                description="+201 since last hour"
+                description="+2 since last hour"
               />
             </div>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-              <Card className="col-span-4">
+              <Card className={`col-span-4 ${cardClassName}`}>
                 <CardHeader>
                   <CardTitle>Overview</CardTitle>
                 </CardHeader>
@@ -82,13 +88,13 @@ const DashboardPage = () => {
                   <OverviewChart />
                 </CardContent>
               </Card>
-              <Card className="col-span-4 lg:col-span-3">
+              <Card className={`col-span-4 lg:col-span-3 ${cardClassName}`}>
                 <CardHeader>
                   <CardTitle>Recent Sales</CardTitle>
                   <CardDescription>
-                    You made 265 sales this month.
+                    You made 4 sales this month.
                   </CardDescription>
-                </CardHeader>
+                </Header>
                 <CardContent>
                   <RecentSales />
                 </CardContent>
