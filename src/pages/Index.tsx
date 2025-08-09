@@ -94,7 +94,7 @@ const DashboardPage = () => {
                   <CardDescription>
                     You made 4 sales this month.
                   </CardDescription>
-                </Header>
+                </CardHeader>
                 <CardContent>
                   <RecentSales />
                 </CardContent>
