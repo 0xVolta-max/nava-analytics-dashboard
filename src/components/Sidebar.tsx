@@ -4,7 +4,7 @@ import { Home, ShoppingCart, Package, Users, LineChart } from "lucide-react";
 
 export function Sidebar({ className }: { className?: string }) {
   return (
-    <div className={cn("pb-12 border-r border-white/20 bg-black/20 backdrop-blur-lg", className)}>
+    <div className={cn("pb-12 bg-black/20 backdrop-blur-lg", className)}>
       <div className="space-y-4 py-4">
         <div className="px-3 py-2">
           <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">

@@ -38,7 +38,7 @@ const DashboardPage = () => {
               </div>
             </div>
           </header>
-          <main className="flex-1 space-y-4 p-8 pt-6 overflow-y-auto">
+          <main className="flex-1 space-y-4 p-8 pt-6 overflow-y-auto border-l border-white/20">
             <div className="flex items-center justify-between space-y-2">
               <div>
                 <h2 className="text-3xl font-bold tracking-tight">Hello Admin User 👋</h2>
