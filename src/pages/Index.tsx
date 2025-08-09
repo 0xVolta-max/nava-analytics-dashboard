@@ -15,7 +15,7 @@ import { StatCard } from "@/components/dashboard/StatCard"
 import { UserNav } from "@/components/dashboard/UserNav"
 import { DollarSign, Users, CreditCard, Activity, Search } from "lucide-react"
 
-const cardClassName = "bg-black/20 backdrop-blur-lg border border-white/20";
+const cardClassName = "bg-black/20 backdrop-blur-lg border border-white/10";
 
 const DashboardPage = () => {
   return (
@@ -23,7 +23,7 @@ const DashboardPage = () => {
       <div className="hidden md:flex h-screen w-full">
         <Sidebar className="w-64" />
         <div className="flex-1 flex flex-col">
-          <header className="border-b border-white/20 bg-black/20 backdrop-blur-lg">
+          <header className="border-b border-white/10 bg-black/20 backdrop-blur-lg">
             <div className="flex h-16 items-center px-8">
               <div className="ml-auto flex items-center space-x-4">
                 <div className="relative ml-auto flex-1 md:grow-0">
@@ -31,14 +31,14 @@ const DashboardPage = () => {
                   <Input
                     type="search"
                     placeholder="Search..."
-                    className="w-full rounded-lg bg-transparent pl-8 md:w-[200px] lg:w-[336px] border-white/20 focus:border-white/40"
+                    className="w-full rounded-lg bg-transparent pl-8 md:w-[200px] lg:w-[336px] border-white/10 focus:border-white/20"
                   />
                 </div>
                 <UserNav />
               </div>
             </div>
           </header>
-          <main className="flex-1 space-y-4 p-8 pt-6 overflow-y-auto border-l border-white/20">
+          <main className="flex-1 space-y-4 p-8 pt-6 overflow-y-auto border-l border-white/10">
             <div className="flex items-center justify-between space-y-2">
               <div>
                 <h2 className="text-3xl font-bold tracking-tight">Hello Admin User 👋</h2>
