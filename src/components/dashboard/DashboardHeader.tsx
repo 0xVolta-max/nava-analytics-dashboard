@@ -1,4 +1,5 @@
 import { UserNav } from "./UserNav";
+import { DateRangePicker } from "./DateRangePicker";
 
 const GlassButton = ({ children }: { children: React.ReactNode }) => (
     <button className="bg-white/15 border border-white/20 text-white px-4 py-2 rounded-lg text-sm backdrop-blur-md hover:bg-white/20 transition-colors">
@@ -15,7 +16,7 @@ export function DashboardHeader() {
             </div>
             <div className="flex items-center gap-4">
                 <GlassButton>🔽 Filter data</GlassButton>
-                <GlassButton>Last 30 days</GlassButton>
+                <DateRangePicker />
                 <div className="text-xs text-white/80">11 min ago</div>
                 <UserNav />
             </div>
