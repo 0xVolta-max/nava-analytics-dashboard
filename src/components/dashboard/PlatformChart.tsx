@@ -7,7 +7,7 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 
 const LegendItem = ({ color, label }: { color: string, label: string }) => (
     <div className="flex items-center gap-2 text-xs">
-        <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: color }}></div>
+        <div className="w-3 h-3 rounded-sm border border-white/25" style={{ backgroundColor: color }}></div>
         <span>{label}</span>
     </div>
 );
