@@ -4,35 +4,29 @@ import { Home, ShoppingCart, Package, Users, LineChart } from "lucide-react";
 
 export function Sidebar({ className }: { className?: string }) {
   return (
-    <div className={cn("pb-12 bg-black/20 backdrop-blur-lg", className)}>
-      <div className="space-y-4 py-4">
-        <div className="px-3 py-2">
-          <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
-            Nava
-          </h2>
-          <div className="space-y-1">
-            <Button variant="ghost" className="w-full justify-start bg-orange-600 text-white hover:bg-orange-700 hover:text-white">
-              <Home className="mr-2 h-4 w-4" />
-              Dashboard
-            </Button>
-            <Button variant="ghost" className="w-full justify-start hover:bg-white/10">
-              <ShoppingCart className="mr-2 h-4 w-4" />
-              Orders
-            </Button>
-            <Button variant="ghost" className="w-full justify-start hover:bg-white/10">
-              <Package className="mr-2 h-4 w-4" />
-              Products
-            </Button>
-            <Button variant="ghost" className="w-full justify-start hover:bg-white/10">
-              <Users className="mr-2 h-4 w-4" />
-              Customers
-            </Button>
-            <Button variant="ghost" className="w-full justify-start hover:bg-white/10">
-              <LineChart className="mr-2 h-4 w-4" />
-              Analytics
-            </Button>
-          </div>
-        </div>
+    <div className={cn("w-64 bg-card text-card-foreground p-4 space-y-6", className)}>
+      <h2 className="text-2xl font-bold px-4">Nava</h2>
+      <div className="space-y-2">
+        <Button variant="ghost" className="w-full justify-start space-x-3 bg-primary text-primary-foreground hover:bg-primary/90">
+          <Home className="h-5 w-5" />
+          <span>Dashboard</span>
+        </Button>
+        <Button variant="ghost" className="w-full justify-start space-x-3 text-muted-foreground hover:bg-accent hover:text-accent-foreground">
+          <ShoppingCart className="h-5 w-5" />
+          <span>Orders</span>
+        </Button>
+        <Button variant="ghost" className="w-full justify-start space-x-3 text-muted-foreground hover:bg-accent hover:text-accent-foreground">
+          <Package className="h-5 w-5" />
+          <span>Products</span>
+        </Button>
+        <Button variant="ghost" className="w-full justify-start space-x-3 text-muted-foreground hover:bg-accent hover:text-accent-foreground">
+          <Users className="h-5 w-5" />
+          <span>Customers</span>
+        </Button>
+        <Button variant="ghost" className="w-full justify-start space-x-3 text-muted-foreground hover:bg-accent hover:text-accent-foreground">
+          <LineChart className="h-5 w-5" />
+          <span>Analytics</span>
+        </Button>
       </div>
     </div>
   );

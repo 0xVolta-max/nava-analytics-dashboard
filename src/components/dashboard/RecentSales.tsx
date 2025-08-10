@@ -17,7 +17,7 @@ export function RecentSales() {
     <div className="space-y-8">
       {salesData.map((sale, index) => (
         <div className="flex items-center" key={index}>
-          <Avatar className="h-9 w-9">
+          <Avatar className="h-10 w-10">
             <AvatarImage src={sale.avatar} alt="Avatar" />
             <AvatarFallback>{sale.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
           </Avatar>

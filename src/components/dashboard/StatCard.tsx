@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -12,15 +12,15 @@ interface StatCardProps {
 
 export function StatCard({ title, value, icon: Icon, description, className }: StatCardProps) {
   return (
-    <Card className={cn(className)}>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium">{title}</CardTitle>
-        <Icon className="h-4 w-4 text-muted-foreground" />
-      </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
-        {description && <p className="text-xs text-muted-foreground">{description}</p>}
-      </CardContent>
+    <Card className={cn("p-6", className)}>
+      <div className="flex justify-between items-start">
+        <div>
+          <p className="text-sm text-muted-foreground">{title}</p>
+          <p className="text-3xl font-bold">{value}</p>
+        </div>
+        <Icon className="h-6 w-6 text-muted-foreground" />
+      </div>
+      {description && <p className="text-xs text-muted-foreground mt-2">{description}</p>}
     </Card>
   );
 }
