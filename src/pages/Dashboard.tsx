@@ -80,7 +80,7 @@ const DashboardPage = () => {
             </div>
         </div>
         <footer className="pt-10 pb-4 flex justify-center items-center">
-            <img src={safyLogoUrl} alt="SAFY Logo" className="w-[150px]" />
+            <img src={safyLogoUrl} alt="SAFY Logo" className="w-[150px] h-auto" />
         </footer>
     </div>
   );
