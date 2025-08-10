@@ -53,12 +53,12 @@ const DashboardPage = () => {
                     </div>
                     <div className="flex justify-between gap-4 items-start">
                         <div>
-                            <div className="text-sm text-white/90">Avg Quality Score</div>
+                            <div className="text-sm text-white/90 whitespace-nowrap">Avg Quality Score</div>
                             <div className="text-2xl font-bold text-white mt-1">85.2</div>
                             <div className="text-xs text-green-400">▲ 2% vs previous period</div>
                         </div>
                         <div>
-                            <div className="text-sm text-white/90">Success Rate</div>
+                            <div className="text-sm text-white/90 whitespace-nowrap">Success Rate</div>
                             <div className="text-2xl font-bold text-white mt-1">78.6%</div>
                             <div className="text-xs text-green-400">▲ 5% vs previous period</div>
                         </div>
