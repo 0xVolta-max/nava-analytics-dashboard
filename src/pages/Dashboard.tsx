@@ -4,6 +4,7 @@ import { PlatformChart } from "@/components/dashboard/PlatformChart";
 import { NicheChart } from "@/components/dashboard/NicheChart";
 import { ActivityHeatmap } from "@/components/dashboard/ActivityHeatmap";
 import { mockData } from "@/lib/mockData";
+import SafyLogo from '@/assets/logo.svg?react';
 
 const formatNumber = (num: number) => {
     if (num >= 1000) {
@@ -79,7 +80,7 @@ const DashboardPage = () => {
             </div>
         </div>
         <footer className="pt-10 pb-4 flex justify-center items-center border-t-2 border-red-500">
-            <span className="text-white text-lg font-bold">SAFY LOGO HERE</span>
+            <SafyLogo className="w-[150px] h-auto" />
         </footer>
     </div>
   );
