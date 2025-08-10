@@ -1,8 +1,8 @@
 const HeatmapCell = ({ intensity }: { intensity: number }) => {
-    const opacity = 0.1 + intensity * 0.9;
+    const opacity = 0.2 + intensity * 0.8; // Erhöhte Grund-Deckkraft
     return (
         <div
-            className="aspect-square rounded-md"
+            className="aspect-square rounded-md border border-white/10" // Rahmen hinzugefügt
             style={{ backgroundColor: `rgba(255, 107, 53, ${opacity})` }}
             title={`${Math.floor(1400 + intensity * 4800)} generations`}
         />
@@ -10,7 +10,7 @@ const HeatmapCell = ({ intensity }: { intensity: number }) => {
 };
 
 const ScaleItem = ({ opacity }: { opacity: number }) => (
-    <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: `rgba(255, 107, 53, ${opacity})` }} />
+    <div className="w-3 h-3 rounded-sm border border-white/10" style={{ backgroundColor: `rgba(255, 107, 53, ${opacity})` }} />
 );
 
 export function ActivityHeatmap() {
@@ -32,10 +32,10 @@ export function ActivityHeatmap() {
             <div className="flex justify-between items-center mt-4 text-xs text-white/70">
                 <span>Less</span>
                 <div className="flex gap-1">
-                    <ScaleItem opacity={0.1} />
-                    <ScaleItem opacity={0.3} />
-                    <ScaleItem opacity={0.5} />
-                    <ScaleItem opacity={0.7} />
+                    <ScaleItem opacity={0.2} />
+                    <ScaleItem opacity={0.4} />
+                    <ScaleItem opacity={0.6} />
+                    <ScaleItem opacity={0.8} />
                     <ScaleItem opacity={1.0} />
                 </div>
                 <span>More</span>
