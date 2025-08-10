@@ -14,7 +14,7 @@ const LegendItem = ({ color, label }: { color: string, label: string }) => (
 
 export function PlatformChart() {
     return (
-        <div className="bg-white/10 backdrop-blur-xl border border-white/15 rounded-2xl p-6">
+        <div className="bg-white/10 backdrop-blur-xl border border-white/25 rounded-2xl p-6">
             <div className="mb-5">
                 <div className="text-xs text-white/70 font-medium">Last 30 days</div>
                 <div className="text-base font-semibold text-white/90 mt-1">Videos by Platform</div>
