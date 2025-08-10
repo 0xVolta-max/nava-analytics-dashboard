@@ -14,8 +14,8 @@ const formatNumber = (num: number) => {
 
 const DashboardPage = () => {
   return (
-    <div className="p-5 min-h-screen">
-        <div className="dashboard-container max-w-7xl mx-auto">
+    <div className="p-5 min-h-screen flex flex-col">
+        <div className="dashboard-container max-w-7xl mx-auto w-full flex-grow">
             <DashboardHeader />
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-5">
@@ -78,6 +78,9 @@ const DashboardPage = () => {
                 </div>
             </div>
         </div>
+        <footer className="pt-10 pb-4 flex justify-center items-center">
+            <img src="/safy-logo.png" alt="Safy Logo" className="h-10" />
+        </footer>
     </div>
   );
 };
