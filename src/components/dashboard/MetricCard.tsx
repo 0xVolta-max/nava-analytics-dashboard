@@ -38,7 +38,7 @@ export function MetricCard({ period, title, value, change, changeText, trendData
                 </div>
             </div>
             <div className="text-4xl font-bold text-white mb-2">{value}</div>
-            <div className={`flex items-center gap-1 text-xs ${changeIsPositive ? 'text-green-400' : 'text-red-400'}`}>
+            <div className={`inline-flex items-center gap-1.5 text-xs font-medium px-2 py-1 rounded-full ${changeIsPositive ? 'bg-green-500/10 text-green-300' : 'bg-red-500/10 text-red-300'}`}>
                 {changeIsPositive ? '▲' : '▼'} {changeText}
             </div>
             <div className="h-32 mt-5">
