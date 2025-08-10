@@ -4,7 +4,7 @@ import { PlatformChart } from "@/components/dashboard/PlatformChart";
 import { NicheChart } from "@/components/dashboard/NicheChart";
 import { ActivityHeatmap } from "@/components/dashboard/ActivityHeatmap";
 import { mockData } from "@/lib/mockData";
-import SafyLogo from '../assets/safy-logo.svg?react';
+import { ReactComponent as SafyLogo } from '../assets/safy-logo.svg';
 
 const formatNumber = (num: number) => {
     if (num >= 1000) {
