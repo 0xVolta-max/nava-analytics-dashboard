@@ -2,7 +2,7 @@ const HeatmapCell = ({ intensity }: { intensity: number }) => {
     const opacity = 0.2 + intensity * 0.8; // Erhöhte Grund-Deckkraft
     return (
         <div
-            className="aspect-square rounded-md border border-white/10" // Rahmen hinzugefügt
+            className="aspect-square rounded-md border border-white/25" // Rahmen verstärkt
             style={{ backgroundColor: `rgba(230, 97, 48, ${opacity})` }}
             title={`${Math.floor(1400 + intensity * 4800)} generations`}
         />
@@ -10,7 +10,7 @@ const HeatmapCell = ({ intensity }: { intensity: number }) => {
 };
 
 const ScaleItem = ({ opacity }: { opacity: number }) => (
-    <div className="w-3 h-3 rounded-sm border border-white/10" style={{ backgroundColor: `rgba(230, 97, 48, ${opacity})` }} />
+    <div className="w-3 h-3 rounded-sm border border-white/25" style={{ backgroundColor: `rgba(230, 97, 48, ${opacity})` }} />
 );
 
 export function ActivityHeatmap() {
