@@ -1,11 +1,18 @@
 import { UserNav } from "./UserNav";
 import { DateRangePicker } from "./DateRangePicker";
-
-const GlassButton = ({ children }: { children: React.ReactNode }) => (
-    <button className="bg-white/15 border border-white/20 text-white px-4 py-2 rounded-lg text-sm backdrop-blur-md hover:bg-white/20 transition-colors">
-        {children}
-    </button>
-);
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { ChevronDown } from "lucide-react";
+import { platformData, nicheData } from "@/lib/mockData";
 
 export function DashboardHeader() {
     return (
@@ -15,7 +22,30 @@ export function DashboardHeader() {
                 <h1 className="text-lg font-semibold text-white">NAVA Analytics Dashboard</h1>
             </div>
             <div className="flex items-center gap-4">
-                <GlassButton>🔽 Filter data</GlassButton>
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="outline" className="bg-white/15 border border-white/20 text-white px-4 py-2 rounded-lg text-sm backdrop-blur-md hover:bg-white/20 transition-colors flex items-center">
+                            Filter data
+                            <ChevronDown className="ml-2 h-4 w-4" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-56 bg-background/[.35] backdrop-blur-xl border-border/25 text-white">
+                        <DropdownMenuItem>All Data</DropdownMenuItem>
+                        <DropdownMenuSeparator className="bg-white/20" />
+                        <DropdownMenuSub>
+                            <DropdownMenuSubTrigger>Filter by Platform</DropdownMenuSubTrigger>
+                            <DropdownMenuSubContent className="bg-background/[.35] backdrop-blur-xl border-border/25 text-white">
+                                {platformData.labels.map(platform => <DropdownMenuItem key={platform}>{platform}</DropdownMenuItem>)}
+                            </DropdownMenuSubContent>
+                        </DropdownMenuSub>
+                        <DropdownMenuSub>
+                            <DropdownMenuSubTrigger>Filter by Niche</DropdownMenuSubTrigger>
+                            <DropdownMenuSubContent className="bg-background/[.35] backdrop-blur-xl border-border/25 text-white">
+                                {nicheData.labels.map(niche => <DropdownMenuItem key={niche}>{niche}</DropdownMenuItem>)}
+                            </DropdownMenuSubContent>
+                        </DropdownMenuSub>
+                    </DropdownMenuContent>
+                </DropdownMenu>
                 <DateRangePicker />
                 <div className="text-xs text-white/80">11 min ago</div>
                 <UserNav />
