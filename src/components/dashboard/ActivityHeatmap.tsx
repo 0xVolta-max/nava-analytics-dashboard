@@ -10,7 +10,7 @@ const HeatmapCell = ({ intensity }: { intensity: number }) => {
 };
 
 const ScaleItem = ({ opacity }: { opacity: number }) => (
-    <div className="w-3 h-3 rounded-sm border border-white/25" style={{ backgroundColor: `rgba(230, 97, 48, ${opacity})` }} />
+    <div className="w-3 h-3 rounded-sm border border-white/50" style={{ backgroundColor: `rgba(230, 97, 48, ${opacity})` }} />
 );
 
 export function ActivityHeatmap() {
