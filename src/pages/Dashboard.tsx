@@ -51,7 +51,7 @@ const DashboardPage = () => {
                         <div className="text-xs text-white/70 font-medium">Last 30 days</div>
                         <div className="text-sm text-white/90 mt-1">Quality Metrics</div>
                     </div>
-                    <div className="flex justify-between gap-4">
+                    <div className="flex justify-between gap-4 items-start">
                         <div>
                             <div className="text-sm text-white/90">Avg Quality Score</div>
                             <div className="text-2xl font-bold text-white mt-1">85.2</div>
