@@ -3,14 +3,14 @@ const HeatmapCell = ({ intensity }: { intensity: number }) => {
     return (
         <div
             className="aspect-square rounded-md border border-white/10" // Rahmen hinzugefügt
-            style={{ backgroundColor: `rgba(255, 107, 53, ${opacity})` }}
+            style={{ backgroundColor: `rgba(204, 86, 42, ${opacity})` }}
             title={`${Math.floor(1400 + intensity * 4800)} generations`}
         />
     );
 };
 
 const ScaleItem = ({ opacity }: { opacity: number }) => (
-    <div className="w-3 h-3 rounded-sm border border-white/10" style={{ backgroundColor: `rgba(255, 107, 53, ${opacity})` }} />
+    <div className="w-3 h-3 rounded-sm border border-white/10" style={{ backgroundColor: `rgba(204, 86, 42, ${opacity})` }} />
 );
 
 export function ActivityHeatmap() {
