@@ -4,6 +4,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuPortal,
   DropdownMenuSeparator,
   DropdownMenuSub,
   DropdownMenuSubContent,
@@ -34,15 +35,19 @@ export function DashboardHeader() {
                         <DropdownMenuSeparator className="bg-white/20" />
                         <DropdownMenuSub>
                             <DropdownMenuSubTrigger>Filter by Platform</DropdownMenuSubTrigger>
-                            <DropdownMenuSubContent className="bg-background/[.35] backdrop-blur-xl border-border/25 text-white">
-                                {platformData.labels.map(platform => <DropdownMenuItem key={platform}>{platform}</DropdownMenuItem>)}
-                            </DropdownMenuSubContent>
+                            <DropdownMenuPortal>
+                                <DropdownMenuSubContent className="bg-background/[.35] backdrop-blur-xl border-border/25 text-white">
+                                    {platformData.labels.map(platform => <DropdownMenuItem key={platform}>{platform}</DropdownMenuItem>)}
+                                </DropdownMenuSubContent>
+                            </DropdownMenuPortal>
                         </DropdownMenuSub>
                         <DropdownMenuSub>
                             <DropdownMenuSubTrigger>Filter by Niche</DropdownMenuSubTrigger>
-                            <DropdownMenuSubContent className="bg-background/[.35] backdrop-blur-xl border-border/25 text-white">
-                                {nicheData.labels.map(niche => <DropdownMenuItem key={niche}>{niche}</DropdownMenuItem>)}
-                            </DropdownMenuSubContent>
+                            <DropdownMenuPortal>
+                                <DropdownMenuSubContent className="bg-background/[.35] backdrop-blur-xl border-border/25 text-white">
+                                    {nicheData.labels.map(niche => <DropdownMenuItem key={niche}>{niche}</DropdownMenuItem>)}
+                                </DropdownMenuSubContent>
+                            </DropdownMenuPortal>
                         </DropdownMenuSub>
                     </DropdownMenuContent>
                 </DropdownMenu>
