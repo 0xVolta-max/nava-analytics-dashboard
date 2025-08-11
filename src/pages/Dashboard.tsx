@@ -14,6 +14,8 @@ const formatNumber = (num: number) => {
 };
 
 const DashboardPage = () => {
+  const currentYear = new Date().getFullYear();
+
   return (
     <div className="p-5 min-h-screen flex flex-col">
         <div className="dashboard-container max-w-7xl mx-auto w-full flex-grow">
@@ -79,8 +81,19 @@ const DashboardPage = () => {
                 </div>
             </div>
         </div>
-        <footer className="pt-10 pb-4 flex justify-center items-center border-t-2 border-red-500">
-            <SafyLogo className="w-[150px] h-auto" />
+        <footer className="pt-10 pb-4 flex justify-between items-center border-t-2 border-red-500">
+            <SafyLogo className="max-w-[150px] h-auto" />
+            <div className="text-right text-xs text-white/70">
+                <p>Designed with Love in Germany</p>
+                <a 
+                    href="https://safy.pro" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="hover:text-white transition-colors"
+                >
+                    © {currentYear} safy.pro
+                </a>
+            </div>
         </footer>
     </div>
   );
