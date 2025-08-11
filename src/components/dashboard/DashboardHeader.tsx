@@ -21,7 +21,7 @@ export function DashboardHeader() {
                 <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center font-bold text-white">📊</div>
                 <h1 className="text-lg font-semibold text-white">NAVA Analytics Dashboard</h1>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center flex-wrap justify-center md:justify-end gap-4">
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="outline" className="bg-white/15 border border-white/20 text-white px-4 py-2 rounded-lg text-sm backdrop-blur-md hover:bg-white/20 transition-colors flex items-center">
