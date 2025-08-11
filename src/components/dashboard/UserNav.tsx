@@ -26,16 +26,16 @@ export function UserNav() {
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56" align="end" forceMount>
+      <DropdownMenuContent className="w-56 bg-background/[.35] backdrop-blur-xl border-border/25 text-white" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">Shahrukh</p>
-            <p className="text-xs leading-none text-muted-foreground">
+            <p className="text-xs leading-none text-white/70">
               shahrukh@example.com
             </p>
           </div>
         </DropdownMenuLabel>
-        <DropdownMenuSeparator />
+        <DropdownMenuSeparator className="bg-white/20" />
         <DropdownMenuGroup>
           <DropdownMenuItem>
             Profile
@@ -51,7 +51,7 @@ export function UserNav() {
           </DropdownMenuItem>
           <DropdownMenuItem>New Team</DropdownMenuItem>
         </DropdownMenuGroup>
-        <DropdownMenuSeparator />
+        <DropdownMenuSeparator className="bg-white/20" />
         <DropdownMenuItem>
           Log out
           <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
