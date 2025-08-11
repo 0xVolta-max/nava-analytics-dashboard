@@ -18,16 +18,18 @@ export function ActivityHeatmap() {
     const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
     return (
-        <div className="bg-white/10 backdrop-blur-xl border border-white/15 rounded-2xl p-6">
+        <div className="bg-white/10 backdrop-blur-xl border border-white/15 rounded-2xl p-6 h-full flex flex-col">
             <div className="mb-5">
                 <div className="text-xs text-white/70 font-medium">Last 30 days</div>
                 <div className="text-base font-semibold text-white/90 mt-1">Generation Activity</div>
             </div>
-            <div className="grid grid-cols-7 gap-2 mb-2 text-center text-xs text-white/70">
-                {weekDays.map(day => <div key={day}>{day}</div>)}
-            </div>
-            <div className="grid grid-cols-7 gap-1">
-                {days.map((intensity, i) => <HeatmapCell key={i} intensity={intensity} />)}
+            <div className="flex-grow flex flex-col">
+                <div className="grid grid-cols-7 gap-2 mb-2 text-center text-xs text-white/70">
+                    {weekDays.map(day => <div key={day}>{day}</div>)}
+                </div>
+                <div className="grid grid-cols-7 gap-1 flex-grow">
+                    {days.map((intensity, i) => <HeatmapCell key={i} intensity={intensity} />)}
+                </div>
             </div>
             <div className="flex justify-between items-center mt-4 text-xs text-white/70">
                 <span>Less</span>

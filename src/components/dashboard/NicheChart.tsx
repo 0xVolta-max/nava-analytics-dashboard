@@ -14,12 +14,12 @@ const LegendItem = ({ color, label }: { color: string, label: string }) => (
 
 export function NicheChart() {
     return (
-        <div className="bg-white/10 backdrop-blur-xl border border-white/15 rounded-2xl p-6">
+        <div className="bg-white/10 backdrop-blur-xl border border-white/15 rounded-2xl p-6 h-full flex flex-col">
             <div className="mb-5">
                 <div className="text-xs text-white/70 font-medium">Last 30 days</div>
                 <div className="text-base font-semibold text-white/90 mt-1">Performance by Niche</div>
             </div>
-            <div className="h-48">
+            <div className="flex-grow relative">
                 <Bar data={nicheData} options={barChartOptions} />
             </div>
             <div className="flex justify-center flex-wrap gap-4 mt-5">

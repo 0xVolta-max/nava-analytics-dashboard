@@ -18,7 +18,7 @@ const DashboardPage = () => {
 
   return (
     <div className="p-5 min-h-screen flex flex-col">
-        <div className="dashboard-container max-w-7xl mx-auto w-full flex-grow">
+        <div className="dashboard-container max-w-7xl mx-auto w-full flex-grow mb-10">
             <DashboardHeader />
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-5">
