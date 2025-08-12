@@ -39,7 +39,7 @@ const GenerationActivity = () => {
                 <span>Wed</span>
                 <span>Fri</span>
             </div>
-            <div className="grid grid-flow-col grid-rows-7 gap-2 w-full max-w-[220px]">
+            <div className="grid grid-flow-col grid-rows-7 gap-2 w-full max-w-[195px]">
                 {data.map((value, index) => (
                 <div
                     key={index}
