@@ -17,15 +17,15 @@ import { platformData, nicheData } from "@/lib/mockData";
 
 export function DashboardHeader() {
     return (
-        <div className="flex flex-col md:flex-row items-center justify-between mb-5 gap-4">
-            <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center font-bold text-white">📊</div>
-                <h1 className="text-lg font-semibold text-white">NAVA Analytics Dashboard</h1>
+        <div className="flex flex-col md:flex-row items-center justify-between mb-8 gap-5">
+            <div className="flex items-center gap-4">
+                <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center font-bold text-white">📊</div>
+                <h1 className="text-xl font-semibold text-white">NAVA Analytics Dashboard</h1>
             </div>
-            <div className="flex items-center flex-wrap justify-center md:justify-end gap-4">
+            <div className="flex items-center flex-wrap justify-center md:justify-end gap-5">
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button variant="outline" className="bg-white/15 border border-white/20 text-white px-4 py-2 rounded-lg text-sm backdrop-blur-md hover:bg-white/20 transition-colors flex items-center">
+                        <Button variant="outline" className="bg-white/15 border border-white/20 text-white px-5 py-3 rounded-lg text-base backdrop-blur-md hover:bg-white/20 transition-colors flex items-center">
                             Filter data
                             <ChevronDown className="ml-2 h-4 w-4" />
                         </Button>
@@ -52,7 +52,7 @@ export function DashboardHeader() {
                     </DropdownMenuContent>
                 </DropdownMenu>
                 <DateRangePicker />
-                <div className="text-xs text-white/80">11 min ago</div>
+                <div className="text-sm text-white/80">11 min ago</div>
                 <UserNav />
             </div>
         </div>
