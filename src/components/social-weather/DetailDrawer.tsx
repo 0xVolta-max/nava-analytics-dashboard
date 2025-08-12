@@ -19,7 +19,7 @@ export const DetailDrawer = ({ isOpen, onOpenChange, platform, data }: DetailDra
 
   const weather = getWeatherIcon(platformData.viralScore);
   const momentum = getMomentum(platformData.trendSlope);
-  const WeatherIcon = weather.icon;
+  const StatusIcon = weather.icon;
   const MomentumIcon = momentum.icon;
 
   return (
@@ -32,7 +32,7 @@ export const DetailDrawer = ({ isOpen, onOpenChange, platform, data }: DetailDra
         <div className="mt-6 space-y-6">
           <div className="flex items-center justify-between rounded-lg bg-white/10 p-4">
             <div className="flex items-center gap-4">
-                <WeatherIcon className={`h-10 w-10 ${weather.color}`} />
+                <StatusIcon className={`h-10 w-10 ${weather.color}`} />
                 <div>
                     <p className="text-sm text-white/70">Viral Score</p>
                     <p className="text-2xl font-bold">{Math.round(platformData.viralScore)}</p>

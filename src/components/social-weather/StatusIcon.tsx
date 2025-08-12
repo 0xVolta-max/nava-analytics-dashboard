@@ -1,12 +1,12 @@
 import type { LucideIcon } from 'lucide-react';
 
-interface WeatherIconProps {
+interface StatusIconProps {
   icon: LucideIcon;
   color: string;
   label: string;
 }
 
-export const WeatherIcon = ({ icon: Icon, color, label }: WeatherIconProps) => {
+export const StatusIcon = ({ icon: Icon, color, label }: StatusIconProps) => {
   return (
     <div className="flex flex-col items-center justify-center gap-2">
       <Icon className={`h-20 w-20 md:h-24 md:w-24 ${color}`} />

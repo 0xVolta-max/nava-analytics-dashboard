@@ -2,11 +2,11 @@ import { Sun, CloudSun, Cloudy, CloudRain, Zap, ArrowUp, ArrowDown, Minus, Dropl
 import type { Platform } from './types';
 
 export const getWeatherIcon = (viralScore: number): { icon: LucideIcon; color: string; label: string } => {
-  if (viralScore > 85) return { icon: Zap, color: 'text-red-400', label: 'Storm' };
-  if (viralScore > 65) return { icon: CloudRain, color: 'text-blue-400', label: 'Rainy' };
-  if (viralScore > 40) return { icon: Cloudy, color: 'text-gray-400', label: 'Cloudy' };
-  if (viralScore > 20) return { icon: CloudSun, color: 'text-yellow-400', label: 'Partly Cloudy' };
-  return { icon: Sun, color: 'text-orange-400', label: 'Sunny' };
+  if (viralScore > 85) return { icon: Zap, color: 'text-red-400', label: 'Explosive' };
+  if (viralScore > 65) return { icon: CloudRain, color: 'text-blue-400', label: 'High' };
+  if (viralScore > 40) return { icon: Cloudy, color: 'text-gray-400', label: 'Moderate' };
+  if (viralScore > 20) return { icon: CloudSun, color: 'text-yellow-400', label: 'Low' };
+  return { icon: Sun, color: 'text-orange-400', label: 'Calm' };
 };
 
 export const getMomentum = (slope: number): { icon: LucideIcon; label: string } => {

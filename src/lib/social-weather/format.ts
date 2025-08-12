@@ -1,5 +1,5 @@
 export const formatEngagement = (value: number): string => {
-  return `${Math.round(value)}°E`;
+  return `${Math.round(value)}%`;
 };
 
 export const formatNumber = (num: number): string => {
