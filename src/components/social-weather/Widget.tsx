@@ -80,7 +80,7 @@ const SocialWeatherWidget = () => {
           </div>
         </div>
 
-        <div className="mt-4 pt-4 border-t border-white/15 flex justify-around items-center gap-2">
+        <div className="mt-2 pt-2 border-t border-white/15 flex justify-around items-center gap-2">
           {data.platforms.map(p => (
             <PlatformMini
               key={p.platform}
