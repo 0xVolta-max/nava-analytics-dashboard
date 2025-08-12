@@ -24,7 +24,7 @@ export const DetailDrawer = ({ isOpen, onOpenChange, platform, data }: DetailDra
 
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
-      <SheetContent className="bg-background/[.20] backdrop-blur-xl border-border/15 text-white">
+      <SheetContent className="bg-background/[.05] backdrop-blur-xl border-border/10 text-white">
         <SheetHeader>
           <SheetTitle className="capitalize text-white/90">{platform} Details</SheetTitle>
           <SheetDescription className="text-white/70">Detailed metrics for the last 7 days.</SheetDescription>
