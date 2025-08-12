@@ -31,9 +31,22 @@ const ActivityHeatmap = () => {
         <h3 className="font-semibold text-white/90">Activity Heatmap</h3>
         <Badge variant="outline" className="border-white/20 text-white/80">Last Year</Badge>
       </div>
-      {/* By removing flex-grow, the container will only be as tall as the grid, preventing the squares from becoming too large. */}
-      <div className="flex items-start justify-center">
-        <div className="grid grid-cols-52 grid-rows-7 gap-1 w-full">
+      
+      {/* This wrapper will grow to fill available space and center the grid. */}
+      <div className="flex-grow flex items-center justify-center overflow-hidden">
+        {/* 
+          The grid itself. It has a specific aspect ratio to maintain its shape.
+          max-width and max-height constrain it within the parent flex container.
+          This makes it scale proportionally to fit the available space.
+        */}
+        <div
+          className="grid grid-cols-52 grid-rows-7 gap-1"
+          style={{
+            aspectRatio: '52 / 7',
+            maxWidth: '100%',
+            maxHeight: '100%',
+          }}
+        >
           {data.map((value, index) => (
             <div
               key={index}
@@ -42,8 +55,6 @@ const ActivityHeatmap = () => {
           ))}
         </div>
       </div>
-      {/* This empty div will take up the remaining space to keep the card's height consistent. */}
-      <div className="flex-grow" />
     </div>
   );
 };
