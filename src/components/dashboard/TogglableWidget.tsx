@@ -27,7 +27,7 @@ const TogglableWidget = () => {
         </div>
       </div>
 
-      <div className="absolute top-2 left-2 z-20">
+      <div className="absolute top-2 right-2 z-20">
         <Button
           size="icon"
           variant="ghost"
