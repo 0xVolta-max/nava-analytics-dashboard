@@ -58,15 +58,15 @@ const SocialWeatherWidget = () => {
               <p className="text-xs text-white/70">Overall Engagement Rate</p>
             </div>
             <div className="space-y-2 text-xs">
-              <div className="flex justify-between items-center">
-                <span className="text-white/70">Momentum</span>
-                <div className="flex items-center gap-1 font-medium">
+              <div className="flex items-center">
+                <span className="text-white/70 w-1/2">Momentum</span>
+                <div className="flex items-center gap-1 font-medium w-1/2 justify-end">
                   <MomentumIcon className="h-4 w-4" /> {momentum.label}
                 </div>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-white/70">Virality Potential</span>
-                <div className="flex items-center gap-1">
+              <div className="flex items-center">
+                <span className="text-white/70 w-1/2">Virality Potential</span>
+                <div className="flex items-center gap-1 w-1/2 justify-end">
                   {viralChance.count > 0 ? Array.from({ length: viralChance.count }).map((_, i) => (
                     <viralChance.icon key={i} className="h-4 w-4 text-blue-300" />
                   )) : <span className="font-medium">Low</span>}
