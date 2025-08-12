@@ -7,23 +7,20 @@ import { Sun, BarChartHorizontal } from 'lucide-react';
 const TogglableWidget = () => {
   const [showWeather, setShowWeather] = React.useState(true);
 
-  const commonClasses = 'transition-all duration-300 ease-in-out col-start-1 row-start-1';
-
   return (
     <div className="relative">
-      <div className="grid rounded-2xl">
+      {/* This container enforces a minimum height to prevent layout shifts */}
+      <div className="relative min-h-[380px]">
         <div
-          aria-hidden={!showWeather}
-          className={`${commonClasses} ${
-            showWeather ? 'opacity-100 scale-100' : 'opacity-0 scale-95 -z-10'
+          className={`absolute inset-0 transition-opacity duration-300 ease-in-out ${
+            showWeather ? 'opacity-100' : 'opacity-0 pointer-events-none'
           }`}
         >
           <SocialWeatherWidget />
         </div>
         <div
-          aria-hidden={showWeather}
-          className={`${commonClasses} ${
-            !showWeather ? 'opacity-100 scale-100' : 'opacity-0 scale-95 -z-10'
+          className={`absolute inset-0 transition-opacity duration-300 ease-in-out ${
+            !showWeather ? 'opacity-100' : 'opacity-0 pointer-events-none'
           }`}
         >
           <ActivityHeatmap />

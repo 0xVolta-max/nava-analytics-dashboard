@@ -43,7 +43,7 @@ const SocialWeatherWidget = () => {
 
   return (
     <>
-      <div className="bg-white/10 backdrop-blur-xl border border-white/15 rounded-2xl p-5 flex flex-col max-w-lg mx-auto">
+      <div className="bg-white/10 backdrop-blur-xl border border-white/15 rounded-2xl p-5 flex flex-col h-full">
         <div className="flex justify-between items-center mb-4">
           <h3 className="font-semibold text-white/90">Social Weather</h3>
           <Badge variant="outline" className="border-white/20 text-white/80">Last 7 Days</Badge>

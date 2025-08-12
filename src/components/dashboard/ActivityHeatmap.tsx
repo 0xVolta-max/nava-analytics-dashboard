@@ -26,17 +26,17 @@ const ActivityHeatmap = () => {
   };
 
   return (
-    <div className="bg-white/10 backdrop-blur-xl border border-white/15 rounded-2xl p-5 flex flex-col">
+    <div className="bg-white/10 backdrop-blur-xl border border-white/15 rounded-2xl p-5 flex flex-col h-full">
       <div className="flex justify-between items-center mb-4">
         <h3 className="font-semibold text-white/90">Activity Heatmap</h3>
         <Badge variant="outline" className="border-white/20 text-white/80">Last Year</Badge>
       </div>
       <div className="flex-grow flex items-center justify-center">
-        <div className="grid grid-rows-7 grid-flow-col gap-1.5">
+        <div className="grid grid-cols-53 grid-rows-7 gap-1 w-full">
           {data.map((value, index) => (
             <div
               key={index}
-              className={`w-3.5 h-3.5 rounded-sm ${getColor(value)}`}
+              className={`aspect-square rounded-sm ${getColor(value)}`}
             />
           ))}
         </div>
