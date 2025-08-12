@@ -2,7 +2,7 @@ import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { MetricCard } from "@/components/dashboard/MetricCard";
 import { PlatformChart } from "@/components/dashboard/PlatformChart";
 import { NicheChart } from "@/components/dashboard/NicheChart";
-import { ActivityHeatmap } from "@/components/dashboard/ActivityHeatmap";
+import SocialWeatherWidget from "@/components/social-weather/Widget";
 import { mockData } from "@/lib/mockData";
 import SafyLogo from '@/assets/logo.svg?react';
 
@@ -77,7 +77,7 @@ const DashboardPage = () => {
                     <NicheChart />
                 </div>
                 <div className="xl:col-span-1">
-                    <ActivityHeatmap />
+                    <SocialWeatherWidget />
                 </div>
             </div>
         </div>
