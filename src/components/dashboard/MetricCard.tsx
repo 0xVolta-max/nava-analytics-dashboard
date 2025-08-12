@@ -30,18 +30,18 @@ export function MetricCard({ period, title, value, change, changeText, trendData
     };
 
     return (
-        <div className="bg-white/10 backdrop-blur-xl border border-white/15 rounded-2xl p-7 relative overflow-hidden">
-            <div className="flex justify-between items-start mb-6">
+        <div className="bg-white/10 backdrop-blur-xl border border-white/15 rounded-2xl p-6 relative overflow-hidden">
+            <div className="flex justify-between items-start mb-5">
                 <div>
-                    <div className="text-sm text-white/70 font-medium">{period}</div>
-                    <div className="text-base text-white/90 mt-1">{title}</div>
+                    <div className="text-xs text-white/70 font-medium">{period}</div>
+                    <div className="text-sm text-white/90 mt-1">{title}</div>
                 </div>
             </div>
-            <div className="text-5xl font-bold text-white mb-3">{value}</div>
-            <div className={`inline-flex items-center gap-1.5 text-sm font-medium px-2.5 py-1.5 rounded-full ${changeIsPositive ? 'bg-green-500/10 text-green-300' : 'bg-red-500/10 text-red-300'}`}>
+            <div className="text-4xl font-bold text-white mb-2">{value}</div>
+            <div className={`inline-flex items-center gap-1.5 text-xs font-medium px-2 py-1 rounded-full ${changeIsPositive ? 'bg-green-500/10 text-green-300' : 'bg-red-500/10 text-red-300'}`}>
                 {changeIsPositive ? '▲' : '▼'} {changeText}
             </div>
-            <div className="h-36 mt-6">
+            <div className="h-32 mt-5">
                 <Line data={chartData} options={lineChartOptions} />
             </div>
         </div>

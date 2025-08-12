@@ -32,7 +32,7 @@ export function DateRangePicker() {
             id="date"
             variant={"outline"}
             className={cn(
-              "w-[300px] justify-start text-left font-normal bg-white/[.05] border border-white/10 text-white px-5 py-3 rounded-lg text-base backdrop-blur-xl hover:bg-white/[.1] transition-colors"
+              "w-[260px] justify-start text-left font-normal bg-white/[.05] border border-white/10 text-white px-4 py-2 rounded-lg text-sm backdrop-blur-xl hover:bg-white/[.1] transition-colors"
             )}
           >
             <CalendarIcon className="mr-2 h-4 w-4" />
@@ -52,7 +52,7 @@ export function DateRangePicker() {
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0 bg-background/[.35] backdrop-blur-xl border-border/25" align="end">
           <div className="flex items-start">
-            <div className="flex flex-col space-y-1 p-3 border-r border-border/25">
+            <div className="flex flex-col space-y-1 p-2 border-r border-border/25">
                 <Button variant="ghost" className="w-full justify-start text-white/80 hover:text-white" onClick={() => setPreset(0)}>1 day</Button>
                 <Button variant="ghost" className="w-full justify-start text-white/80 hover:text-white" onClick={() => setPreset(6)}>7 days</Button>
                 <Button variant="ghost" className="w-full justify-start text-white/80 hover:text-white" onClick={() => setPreset(13)}>14 days</Button>
