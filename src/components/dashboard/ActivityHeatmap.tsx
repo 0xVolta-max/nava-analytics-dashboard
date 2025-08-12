@@ -31,8 +31,9 @@ const ActivityHeatmap = () => {
         <h3 className="font-semibold text-white/90">Activity Heatmap</h3>
         <Badge variant="outline" className="border-white/20 text-white/80">Last Year</Badge>
       </div>
-      <div className="flex-grow flex items-center justify-center">
-        <div className="grid grid-cols-53 grid-rows-7 gap-1 w-full">
+      {/* By removing flex-grow, the container will only be as tall as the grid, preventing the squares from becoming too large. */}
+      <div className="flex items-start justify-center">
+        <div className="grid grid-cols-52 grid-rows-7 gap-1 w-full">
           {data.map((value, index) => (
             <div
               key={index}
@@ -41,6 +42,8 @@ const ActivityHeatmap = () => {
           ))}
         </div>
       </div>
+      {/* This empty div will take up the remaining space to keep the card's height consistent. */}
+      <div className="flex-grow" />
     </div>
   );
 };
