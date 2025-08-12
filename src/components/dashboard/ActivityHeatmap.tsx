@@ -1,8 +1,18 @@
 import { Badge } from "@/components/ui/badge";
 
 const ActivityHeatmap = () => {
+  // Simple pseudo-random generator for deterministic results
+  const seededRandom = (seed: number) => {
+    let s = seed;
+    return () => {
+      s = Math.sin(s) * 10000;
+      return s - Math.floor(s);
+    };
+  };
+  const random = seededRandom(123); // Use a fixed seed for consistency
+
   // Generate mock data for a year (52 weeks * 7 days)
-  const data = Array.from({ length: 364 }).map(() => Math.floor(Math.random() * 5));
+  const data = Array.from({ length: 364 }).map(() => Math.floor(random() * 5));
 
   const getColor = (value: number) => {
     switch (value) {
