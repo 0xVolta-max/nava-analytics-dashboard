@@ -1,6 +1,6 @@
 import * as React from 'react';
 import SocialWeatherWidget from '@/components/social-weather/Widget';
-import ActivityHeatmap from '@/components/dashboard/ActivityHeatmap';
+import GenerationActivity from '@/components/dashboard/GenerationActivity';
 import { Button } from '@/components/ui/button';
 import { Sun, BarChartHorizontal } from 'lucide-react';
 
@@ -23,7 +23,7 @@ const TogglableWidget = () => {
             !showWeather ? 'opacity-100' : 'opacity-0 pointer-events-none'
           }`}
         >
-          <ActivityHeatmap />
+          <GenerationActivity />
         </div>
       </div>
 
