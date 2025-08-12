@@ -11,6 +11,8 @@ Welcome to your NAVA Analytics Dashboard, a powerful and visually appealing inte
 - [x] Ensured a consistent and modern "glassmorphism" UI style, including refined transparency for overlays and drawers.
 - [x] Adjusted component heights and spacing for a more polished and unified look.
 - [x] Added custom branding with a new logo and favicon.
+- [x] Integrated a togglable widget for Social Pulse and Generation Activity, allowing users to switch between views.
+- [x] Developed the Social Pulse (SocialWeather) widget to display real-time social media insights.
 
 ### Next Steps (Todos)
 - [ ] **Implement Data Filtering**: Connect the "Filter data" dropdown and the date picker to actually filter the displayed metrics.
