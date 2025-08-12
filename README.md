@@ -15,10 +15,23 @@ Welcome to your NAVA Analytics Dashboard, a powerful and visually appealing inte
 - [x] Developed the Social Pulse (SocialWeather) widget to display real-time social media insights.
 
 ### Next Steps (Todos)
-- [ ] **Implement Data Filtering**: Connect the "Filter data" dropdown and the date picker to actually filter the displayed metrics.
-- [ ] **Backend Integration**: Replace the current `mockData.ts` with a real API connection to fetch live data.
-- [ ] **Authentication**: Implement user authentication and connect it to the `UserNav` component.
-- [ ] **Build Out Pages**: Create and implement the "Profile", "Billing", and "Settings" pages accessible from the user menu.
+- [ ] **Backend & Authentication (High Priority)**:
+    - [ ] Integrate a backend service (e.g., Supabase) to handle data and user authentication.
+    - [ ] Replace `mockData.ts` and the mock adapter with live API calls.
+    - [ ] Implement user login/logout functionality and secure the dashboard routes.
+    - [ ] Connect real user data to the `UserNav` component.
+- [ ] **Implement Data Filtering**:
+    - [ ] Connect the "Filter data" dropdown and the date picker to the data-fetching logic.
+    - [ ] Ensure all charts and metric cards update dynamically based on the selected filters.
+- [ ] **Build Out Core Pages**:
+    - [ ] Create and implement the "Profile", "Billing", and "Settings" pages accessible from the user menu.
+    - [ ] Design a consistent and reusable layout for these secondary pages.
+- [ ] **Refine State Management & Error Handling**:
+    - [ ] Evaluate and potentially implement a global state manager (e.g., Zustand) for shared state like filters and user info.
+    - [ ] Add robust loading states and user-friendly error messages for all asynchronous operations.
+- [ ] **Testing**:
+    - [ ] Write unit and integration tests for critical components (e.g., charts, data fetching hooks).
+    - [ ] Ensure the application is reliable and maintainable.
 
 ## Deployment
 
