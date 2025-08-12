@@ -32,18 +32,18 @@ const GenerationActivity = () => {
         <Badge variant="outline" className="border-white/20 text-white/80">Last 30 Days</Badge>
       </div>
       
-      <div className="flex-grow flex flex-col justify-center">
-        <div className="flex gap-3">
+      <div className="flex-grow flex flex-col justify-center items-center">
+        <div className="flex gap-2">
           <div className="flex flex-col justify-between text-xs text-white/50 py-1">
             <span>Mon</span>
             <span>Wed</span>
             <span>Fri</span>
           </div>
-          <div className="grid grid-flow-col grid-rows-7 grid-cols-5 gap-2 w-full">
+          <div className="grid grid-flow-col grid-rows-7 grid-cols-5 gap-1">
             {data.map((value, index) => (
               <div
                 key={index}
-                className={`aspect-square rounded-sm ${getColor(value)}`}
+                className={`w-4 h-4 rounded-sm ${getColor(value)}`}
               />
             ))}
           </div>
