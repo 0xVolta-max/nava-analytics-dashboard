@@ -8,7 +8,7 @@ Welcome to your NAVA Analytics Dashboard, a powerful and visually appealing inte
 - [x] Set up the basic dashboard layout.
 - [x] Created metric cards, charts, and activity heatmap using mock data.
 - [x] Implemented a responsive header that adapts to different screen sizes.
-- [x] Ensured a consistent and modern "glassmorphism" UI style.
+- [x] Ensured a consistent and modern "glassmorphism" UI style, including refined transparency for overlays and drawers.
 - [x] Adjusted component heights and spacing for a more polished and unified look.
 - [x] Added custom branding with a new logo and favicon.
 
