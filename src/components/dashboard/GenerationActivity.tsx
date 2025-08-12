@@ -32,32 +32,32 @@ const GenerationActivity = () => {
         <Badge variant="outline" className="border-white/20 text-white/80">Last 30 Days</Badge>
       </div>
       
-      <div className="flex-grow flex flex-col justify-center items-center">
-        <div className="flex gap-2">
-          <div className="flex flex-col justify-between text-xs text-white/50 py-1">
-            <span>Mon</span>
-            <span>Wed</span>
-            <span>Fri</span>
-          </div>
-          <div className="grid grid-flow-col grid-rows-7 grid-cols-5 gap-1">
-            {data.map((value, index) => (
-              <div
-                key={index}
-                className={`w-4 h-4 rounded-sm ${getColor(value)}`}
-              />
-            ))}
-          </div>
+      <div className="flex-grow flex flex-col justify-between">
+        <div className="flex justify-center items-center gap-2 mt-2">
+            <div className="flex flex-col justify-between text-xs text-white/50 self-stretch py-1">
+                <span>Mon</span>
+                <span>Wed</span>
+                <span>Fri</span>
+            </div>
+            <div className="grid grid-flow-col grid-rows-7 grid-cols-5 gap-2 w-full max-w-xs">
+                {data.map((value, index) => (
+                <div
+                    key={index}
+                    className={`aspect-square rounded-sm ${getColor(value)}`}
+                />
+                ))}
+            </div>
         </div>
-      </div>
 
-      <div className="flex justify-end items-center gap-2 mt-4 text-xs text-white/50">
-        <span>Less</span>
-        <div className="flex gap-1">
-            {Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className={`w-3 h-3 rounded-sm ${getColor(i)}`} />
-            ))}
+        <div className="flex justify-end items-center gap-2 text-xs text-white/50">
+            <span>Less</span>
+            <div className="flex gap-1">
+                {Array.from({ length: 5 }).map((_, i) => (
+                    <div key={i} className={`w-3 h-3 rounded-sm ${getColor(i)}`} />
+                ))}
+            </div>
+            <span>More</span>
         </div>
-        <span>More</span>
       </div>
     </div>
   );
