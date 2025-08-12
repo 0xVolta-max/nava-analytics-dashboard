@@ -35,12 +35,12 @@ export const DetailDrawer = ({ isOpen, onOpenChange, platform, data }: DetailDra
                 <StatusIcon className={`h-10 w-10 ${weather.color}`} />
                 <div>
                     <p className="text-sm text-white/70">Viral Score</p>
-                    <p className="text-2xl font-bold">{Math.round(platformData.viralScore)}</p>
+                    <p className="text-xl sm:text-2xl font-bold">{Math.round(platformData.viralScore)}</p>
                 </div>
             </div>
             <div className="text-right">
                 <p className="text-sm text-white/70">Engagement</p>
-                <p className="text-2xl font-bold">{formatEngagement(platformData.engagementRate)}</p>
+                <p className="text-xl sm:text-2xl font-bold">{formatEngagement(platformData.engagementRate)}</p>
             </div>
           </div>
           

@@ -54,7 +54,7 @@ const SocialWeatherWidget = () => {
           </div>
           <div className="space-y-3 flex flex-col justify-center">
             <div>
-              <p className="text-5xl font-bold text-white">{formatEngagement(data.global.engagementE)}</p>
+              <p className="text-4xl lg:text-5xl font-bold text-white">{formatEngagement(data.global.engagementE)}</p>
               <p className="text-sm text-white/70">Overall Engagement Rate</p>
             </div>
             <div className="space-y-2 text-sm">
