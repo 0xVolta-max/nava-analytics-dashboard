@@ -83,7 +83,7 @@ const SocialWeatherWidget = () => {
                         </PopoverContent>
                     </Popover>
                 </div>
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-0.5">
                   {Array.from({ length: momentum.count }).map((_, i) => (
                     <momentum.icon key={i} className={`h-4 w-4 ${momentum.color}`} />
                   ))}
@@ -117,7 +117,7 @@ const SocialWeatherWidget = () => {
                         </PopoverContent>
                     </Popover>
                 </div>
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-0.5">
                   {viralChance.count > 0 ? (
                     Array.from({ length: viralChance.count }).map((_, i) => (
                       <viralChance.icon key={i} className={`h-4 w-4 ${viralChance.color}`} />
