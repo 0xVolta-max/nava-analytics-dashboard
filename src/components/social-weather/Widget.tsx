@@ -60,71 +60,76 @@ const SocialWeatherWidget = () => {
             </div>
             <div className="space-y-2 text-xs">
               <div className="flex justify-between items-center">
-                <div className="flex items-center gap-1 w-24">
-                    <span className="text-white/70">Momentum</span>
-                    <Popover>
-                        <PopoverTrigger>
-                        <HelpCircle className="h-3.5 w-3.5 text-white/50 hover:text-white/80 transition-colors cursor-pointer" />
-                        </PopoverTrigger>
-                        <PopoverContent side="right" className="w-60 bg-background/[.35] backdrop-blur-xl border-border/25 text-white p-3">
-                        <div className="space-y-2">
-                            <p className="text-sm font-semibold mb-2">Momentum Legend</p>
-                            {momentumLevels.map((level) => (
-                            <div key={level.label} className="flex items-center justify-between text-xs">
-                                <span className="text-white/80">{level.label}</span>
-                                <div className="flex items-center gap-1">
-                                    {Array.from({ length: level.count }).map((_, i) => (
+                {/* Left side: Labels */}
+                <div className="flex flex-col space-y-2">
+                    <div className="flex items-center gap-1">
+                        <span className="text-white/70">Momentum</span>
+                        <Popover>
+                            <PopoverTrigger>
+                            <HelpCircle className="h-3.5 w-3.5 text-white/50 hover:text-white/80 transition-colors cursor-pointer" />
+                            </PopoverTrigger>
+                            <PopoverContent side="right" className="w-60 bg-background/[.35] backdrop-blur-xl border-border/25 text-white p-3">
+                            <div className="space-y-2">
+                                <p className="text-sm font-semibold mb-2">Momentum Legend</p>
+                                {momentumLevels.map((level) => (
+                                <div key={level.label} className="flex items-center justify-between text-xs">
+                                    <span className="text-white/80">{level.label}</span>
+                                    <div className="flex items-center gap-1">
+                                        {Array.from({ length: level.count }).map((_, i) => (
+                                            <level.icon key={i} className={`h-3.5 w-3.5 ${level.color}`} />
+                                        ))}
+                                    </div>
+                                </div>
+                                ))}
+                            </div>
+                            </PopoverContent>
+                        </Popover>
+                    </div>
+                    <div className="flex items-center gap-1">
+                        <span className="text-white/70">Virality</span>
+                        <Popover>
+                            <PopoverTrigger>
+                            <HelpCircle className="h-3.5 w-3.5 text-white/50 hover:text-white/80 transition-colors cursor-pointer" />
+                            </PopoverTrigger>
+                            <PopoverContent side="right" className="w-60 bg-background/[.35] backdrop-blur-xl border-border/25 text-white p-3">
+                            <div className="space-y-2">
+                                <p className="text-sm font-semibold mb-2">Virality Legend</p>
+                                {viralityLevels.map((level, index) => (
+                                <div key={level.label} className="flex items-center justify-between text-xs">
+                                    <span className="text-white/80">{level.label}</span>
+                                    <div className="flex items-center gap-1">
+                                    {index < 3 ? (
+                                        Array.from({ length: 3 - index }).map((_, i) => (
                                         <level.icon key={i} className={`h-3.5 w-3.5 ${level.color}`} />
-                                    ))}
+                                        ))
+                                    ) : (
+                                        <level.icon className={`h-3.5 w-3.5 ${level.color}`} />
+                                    )}
+                                    </div>
                                 </div>
+                                ))}
                             </div>
-                            ))}
-                        </div>
-                        </PopoverContent>
-                    </Popover>
+                            </PopoverContent>
+                        </Popover>
+                    </div>
                 </div>
-                <div className="flex items-center gap-0">
-                  {Array.from({ length: momentum.count }).map((_, i) => (
-                    <momentum.icon key={i} className={`h-4 w-4 ${momentum.color}`} />
-                  ))}
-                </div>
-              </div>
-              <div className="flex justify-between items-center">
-                <div className="flex items-center gap-1 w-24">
-                    <span className="text-white/70">Virality</span>
-                    <Popover>
-                        <PopoverTrigger>
-                        <HelpCircle className="h-3.5 w-3.5 text-white/50 hover:text-white/80 transition-colors cursor-pointer" />
-                        </PopoverTrigger>
-                        <PopoverContent side="right" className="w-60 bg-background/[.35] backdrop-blur-xl border-border/25 text-white p-3">
-                        <div className="space-y-2">
-                            <p className="text-sm font-semibold mb-2">Virality Legend</p>
-                            {viralityLevels.map((level, index) => (
-                            <div key={level.label} className="flex items-center justify-between text-xs">
-                                <span className="text-white/80">{level.label}</span>
-                                <div className="flex items-center gap-1">
-                                {index < 3 ? (
-                                    Array.from({ length: 3 - index }).map((_, i) => (
-                                    <level.icon key={i} className={`h-3.5 w-3.5 ${level.color}`} />
-                                    ))
-                                ) : (
-                                    <level.icon className={`h-3.5 w-3.5 ${level.color}`} />
-                                )}
-                                </div>
-                            </div>
-                            ))}
-                        </div>
-                        </PopoverContent>
-                    </Popover>
-                </div>
-                <div className="flex items-center gap-0">
-                  {viralChance.count > 0 ? (
-                    Array.from({ length: viralChance.count }).map((_, i) => (
-                      <viralChance.icon key={i} className={`h-4 w-4 ${viralChance.color}`} />
-                    ))
-                  ) : (
-                    <viralChance.icon className={`h-4 w-4 ${viralChance.color}`} />
-                  )}
+
+                {/* Right side: Icons, stacked and centered */}
+                <div className="flex flex-col items-center space-y-1">
+                    <div className="flex items-center gap-0 h-4"> {/* Momentum icons */}
+                        {Array.from({ length: momentum.count }).map((_, i) => (
+                            <momentum.icon key={i} className={`h-4 w-4 ${momentum.color}`} />
+                        ))}
+                    </div>
+                    <div className="flex items-center gap-0 h-4"> {/* Virality icons */}
+                        {viralChance.count > 0 ? (
+                        Array.from({ length: viralChance.count }).map((_, i) => (
+                            <viralChance.icon key={i} className={`h-4 w-4 ${viralChance.color}`} />
+                        ))
+                        ) : (
+                        <viralChance.icon className={`h-4 w-4 ${viralChance.color}`} />
+                        )}
+                    </div>
                 </div>
               </div>
               <div>
