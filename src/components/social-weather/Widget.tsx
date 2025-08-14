@@ -1,10 +1,12 @@
 import * as React from 'react';
+import { HelpCircle } from 'lucide-react';
 import { Skeleton } from "@/components/ui/skeleton";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { getSocialWeather } from "@/lib/social-weather/adapters/mock";
 import { formatEngagement } from "@/lib/social-weather/format";
-import { getWeatherIcon, getMomentum, getViralChance } from "@/lib/social-weather/mapping";
+import { getWeatherIcon, getMomentum, getViralChance, viralityLevels } from "@/lib/social-weather/mapping";
 import type { SocialWeather, Platform } from "@/lib/social-weather/types";
 import { StatusIcon } from './StatusIcon';
 import { PlatformMini } from './PlatformMini';
@@ -65,16 +67,46 @@ const SocialWeatherWidget = () => {
                 </div>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-white/70 w-24">Virality Potential</span>
+                <span className="text-white/70 w-24">Virality</span>
                 <div className="flex items-center gap-1">
-                  {viralChance.count > 0 ? Array.from({ length: viralChance.count }).map((_, i) => (
-                    <viralChance.icon key={i} className="h-4 w-4 text-blue-300" />
-                  )) : <span className="font-medium">Low</span>}
+                  {viralChance.count > 0 ? (
+                    Array.from({ length: viralChance.count }).map((_, i) => (
+                      <viralChance.icon key={i} className={`h-4 w-4 ${viralChance.color}`} />
+                    ))
+                  ) : (
+                    <viralChance.icon className={`h-4 w-4 ${viralChance.color}`} />
+                  )}
                 </div>
               </div>
               <div>
-                 <span className="text-white/70 text-xs">Buzz Level</span>
-                 <Progress value={data.global.buzzPressure} className="h-2 mt-1 bg-white/20" />
+                 <div className="flex items-center gap-1.5 mb-1">
+                    <span className="text-white/70 text-xs">Buzz Level</span>
+                    <Popover>
+                        <PopoverTrigger>
+                        <HelpCircle className="h-3.5 w-3.5 text-white/50 hover:text-white/80 transition-colors cursor-pointer" />
+                        </PopoverTrigger>
+                        <PopoverContent className="w-60 bg-background/[.35] backdrop-blur-xl border-border/25 text-white p-3">
+                        <div className="space-y-2">
+                            <p className="text-sm font-semibold mb-2">Virality Legend</p>
+                            {viralityLevels.map((level, index) => (
+                            <div key={level.label} className="flex items-center justify-between text-xs">
+                                <span className="text-white/80">{level.label}</span>
+                                <div className="flex items-center gap-1">
+                                {index < 3 ? (
+                                    Array.from({ length: 3 - index }).map((_, i) => (
+                                    <level.icon key={i} className={`h-3.5 w-3.5 ${level.color}`} />
+                                    ))
+                                ) : (
+                                    <level.icon className={`h-3.5 w-3.5 ${level.color}`} />
+                                )}
+                                </div>
+                            </div>
+                            ))}
+                        </div>
+                        </PopoverContent>
+                    </Popover>
+                 </div>
+                 <Progress value={data.global.buzzPressure} className="h-2 bg-white/20" />
               </div>
             </div>
           </div>

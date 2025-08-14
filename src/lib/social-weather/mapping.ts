@@ -15,11 +15,18 @@ export const getMomentum = (slope: number): { icon: LucideIcon; label: string } 
   return { icon: Minus, label: 'Stable' };
 };
 
-export const getViralChance = (chance: number): { count: number; icon: LucideIcon } => {
-  if (chance > 75) return { count: 3, icon: Droplets };
-  if (chance > 50) return { count: 2, icon: Droplets };
-  if (chance > 25) return { count: 1, icon: Droplets };
-  return { count: 0, icon: Droplets };
+export const viralityLevels = [
+  { label: 'High', icon: Droplets, color: 'text-blue-300' },
+  { label: 'Medium', icon: Droplets, color: 'text-blue-300' },
+  { label: 'Low', icon: Droplets, color: 'text-blue-300' },
+  { label: 'Very Low', icon: Minus, color: 'text-white/70' },
+];
+
+export const getViralChance = (chance: number): { count: number; icon: LucideIcon; label: string; color: string } => {
+  if (chance > 75) return { count: 3, ...viralityLevels[0] };
+  if (chance > 50) return { count: 2, ...viralityLevels[1] };
+  if (chance > 25) return { count: 1, ...viralityLevels[2] };
+  return { count: 0, ...viralityLevels[3] };
 };
 
 export const getPlatformIcon = (platform: Platform): LucideIcon | string => {
