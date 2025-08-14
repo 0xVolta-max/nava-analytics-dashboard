@@ -60,7 +60,7 @@ const SocialWeatherWidget = () => {
             </div>
             <div className="space-y-2 text-xs">
               <div className="flex justify-between items-center">
-                <div className="flex items-center gap-1.5 w-24">
+                <div className="flex items-center gap-1 w-24">
                     <span className="text-white/70">Momentum</span>
                     <Popover>
                         <PopoverTrigger>
@@ -83,14 +83,14 @@ const SocialWeatherWidget = () => {
                         </PopoverContent>
                     </Popover>
                 </div>
-                <div className="flex items-center gap-0.5">
+                <div className="flex items-center gap-0">
                   {Array.from({ length: momentum.count }).map((_, i) => (
                     <momentum.icon key={i} className={`h-4 w-4 ${momentum.color}`} />
                   ))}
                 </div>
               </div>
               <div className="flex justify-between items-center">
-                <div className="flex items-center gap-1.5 w-24">
+                <div className="flex items-center gap-1 w-24">
                     <span className="text-white/70">Virality</span>
                     <Popover>
                         <PopoverTrigger>
@@ -117,7 +117,7 @@ const SocialWeatherWidget = () => {
                         </PopoverContent>
                     </Popover>
                 </div>
-                <div className="flex items-center gap-0.5">
+                <div className="flex items-center gap-0">
                   {viralChance.count > 0 ? (
                     Array.from({ length: viralChance.count }).map((_, i) => (
                       <viralChance.icon key={i} className={`h-4 w-4 ${viralChance.color}`} />
