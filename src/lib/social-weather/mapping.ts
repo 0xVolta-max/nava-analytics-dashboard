@@ -9,10 +9,20 @@ export const getWeatherIcon = (viralScore: number): { icon: LucideIcon; color: s
   return { icon: Sun, color: 'text-orange-400', label: 'Calm' };
 };
 
-export const getMomentum = (slope: number): { icon: LucideIcon; label: string } => {
-  if (slope > 0.1) return { icon: ArrowUp, label: 'Trending Up' };
-  if (slope < -0.1) return { icon: ArrowDown, label: 'Trending Down' };
-  return { icon: Minus, label: 'Stable' };
+export const momentumLevels = [
+    { label: 'Strong Up', icon: ArrowUp, color: 'text-green-400', count: 3 },
+    { label: 'Trending Up', icon: ArrowUp, color: 'text-green-400', count: 2 },
+    { label: 'Stable', icon: Minus, color: 'text-white/70', count: 1 },
+    { label: 'Trending Down', icon: ArrowDown, color: 'text-red-400', count: 2 },
+    { label: 'Strong Down', icon: ArrowDown, color: 'text-red-400', count: 3 },
+];
+
+export const getMomentum = (slope: number): { count: number; icon: LucideIcon; label: string; color: string } => {
+    if (slope > 0.5) return momentumLevels[0];
+    if (slope > 0.1) return momentumLevels[1];
+    if (slope < -0.5) return momentumLevels[4];
+    if (slope < -0.1) return momentumLevels[3];
+    return momentumLevels[2];
 };
 
 export const viralityLevels = [

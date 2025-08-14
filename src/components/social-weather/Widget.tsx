@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { getSocialWeather } from "@/lib/social-weather/adapters/mock";
 import { formatEngagement } from "@/lib/social-weather/format";
-import { getWeatherIcon, getMomentum, getViralChance, viralityLevels } from "@/lib/social-weather/mapping";
+import { getWeatherIcon, getMomentum, getViralChance, viralityLevels, momentumLevels } from "@/lib/social-weather/mapping";
 import type { SocialWeather, Platform } from "@/lib/social-weather/types";
 import { StatusIcon } from './StatusIcon';
 import { PlatformMini } from './PlatformMini';
@@ -40,7 +40,6 @@ const SocialWeatherWidget = () => {
   const weather = getWeatherIcon(data.global.viralScore);
   const momentum = getMomentum(data.global.momentum);
   const viralChance = getViralChance(data.global.viralChance12h);
-  const MomentumIcon = momentum.icon;
 
   return (
     <>
@@ -61,9 +60,33 @@ const SocialWeatherWidget = () => {
             </div>
             <div className="space-y-2 text-xs">
               <div className="flex justify-between items-center">
-                <span className="text-white/70 w-24">Momentum</span>
-                <div className="flex items-center gap-1 font-medium">
-                  <MomentumIcon className="h-4 w-4" /> {momentum.label}
+                <div className="flex items-center gap-1.5 w-24">
+                    <span className="text-white/70">Momentum</span>
+                    <Popover>
+                        <PopoverTrigger>
+                        <HelpCircle className="h-3.5 w-3.5 text-white/50 hover:text-white/80 transition-colors cursor-pointer" />
+                        </PopoverTrigger>
+                        <PopoverContent side="right" className="w-60 bg-background/[.35] backdrop-blur-xl border-border/25 text-white p-3">
+                        <div className="space-y-2">
+                            <p className="text-sm font-semibold mb-2">Momentum Legend</p>
+                            {momentumLevels.map((level) => (
+                            <div key={level.label} className="flex items-center justify-between text-xs">
+                                <span className="text-white/80">{level.label}</span>
+                                <div className="flex items-center gap-1">
+                                    {Array.from({ length: level.count }).map((_, i) => (
+                                        <level.icon key={i} className={`h-3.5 w-3.5 ${level.color}`} />
+                                    ))}
+                                </div>
+                            </div>
+                            ))}
+                        </div>
+                        </PopoverContent>
+                    </Popover>
+                </div>
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: momentum.count }).map((_, i) => (
+                    <momentum.icon key={i} className={`h-4 w-4 ${momentum.color}`} />
+                  ))}
                 </div>
               </div>
               <div className="flex justify-between items-center">
