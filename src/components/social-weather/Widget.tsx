@@ -67,25 +67,13 @@ const SocialWeatherWidget = () => {
                 </div>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-white/70 w-24">Virality</span>
-                <div className="flex items-center gap-1">
-                  {viralChance.count > 0 ? (
-                    Array.from({ length: viralChance.count }).map((_, i) => (
-                      <viralChance.icon key={i} className={`h-4 w-4 ${viralChance.color}`} />
-                    ))
-                  ) : (
-                    <viralChance.icon className={`h-4 w-4 ${viralChance.color}`} />
-                  )}
-                </div>
-              </div>
-              <div>
-                 <div className="flex items-center gap-1.5 mb-1">
-                    <span className="text-white/70 text-xs">Buzz Level</span>
+                <div className="flex items-center gap-1.5 w-24">
+                    <span className="text-white/70">Virality</span>
                     <Popover>
                         <PopoverTrigger>
                         <HelpCircle className="h-3.5 w-3.5 text-white/50 hover:text-white/80 transition-colors cursor-pointer" />
                         </PopoverTrigger>
-                        <PopoverContent className="w-60 bg-background/[.35] backdrop-blur-xl border-border/25 text-white p-3">
+                        <PopoverContent side="right" className="w-60 bg-background/[.35] backdrop-blur-xl border-border/25 text-white p-3">
                         <div className="space-y-2">
                             <p className="text-sm font-semibold mb-2">Virality Legend</p>
                             {viralityLevels.map((level, index) => (
@@ -105,6 +93,20 @@ const SocialWeatherWidget = () => {
                         </div>
                         </PopoverContent>
                     </Popover>
+                </div>
+                <div className="flex items-center gap-1">
+                  {viralChance.count > 0 ? (
+                    Array.from({ length: viralChance.count }).map((_, i) => (
+                      <viralChance.icon key={i} className={`h-4 w-4 ${viralChance.color}`} />
+                    ))
+                  ) : (
+                    <viralChance.icon className={`h-4 w-4 ${viralChance.color}`} />
+                  )}
+                </div>
+              </div>
+              <div>
+                 <div className="flex items-center gap-1.5 mb-1">
+                    <span className="text-white/70 text-xs">Buzz Level</span>
                  </div>
                  <Progress value={data.global.buzzPressure} className="h-2 bg-white/20" />
               </div>
