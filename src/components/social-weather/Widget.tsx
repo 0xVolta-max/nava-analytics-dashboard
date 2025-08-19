@@ -4,7 +4,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { getSocialWeather } from "@/lib/social-weather/adapters/mock";
+import { getSocialWeatherFromSupabase } from "@/lib/social-weather/adapters/supabase";
 import { formatEngagement } from "@/lib/social-weather/format";
 import { getWeatherIcon, getMomentum, getViralChance, viralityLevels, momentumLevels } from "@/lib/social-weather/mapping";
 import type { SocialWeather, Platform } from "@/lib/social-weather/types";
@@ -21,9 +21,15 @@ const SocialWeatherWidget = () => {
   React.useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
-      const weatherData = await getSocialWeather(new Date().getDate());
-      setData(weatherData);
-      setIsLoading(false);
+      try {
+        const weatherData = await getSocialWeatherFromSupabase();
+        setData(weatherData);
+      } catch (error) {
+        console.error("Fehler im SocialWeatherWidget:", error);
+        // Optional: Setzen Sie einen Fehlerzustand, um ihn in der UI anzuzeigen
+      } finally {
+        setIsLoading(false);
+      }
     };
     fetchData();
   }, []);
@@ -46,7 +52,7 @@ const SocialWeatherWidget = () => {
       <div className="bg-white/10 backdrop-blur-xl border border-white/15 rounded-2xl p-5 flex flex-col h-full">
         <div className="flex justify-between items-center mb-4 pr-10">
           <h3 className="font-semibold text-white/90">Social Pulse</h3>
-          <Badge variant="outline" className="border-white/20 text-white/80">Last 7 Days</Badge>
+          <Badge variant="outline" className="border-white/20 text-white/80">Live Data</Badge>
         </div>
 
         <div className="flex-grow grid grid-cols-1 md:grid-cols-2 gap-4">
