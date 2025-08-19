@@ -19,8 +19,8 @@ const ForgotPasswordPage = () => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const { error } = await supabase.rpc('nava_forgot_password_request', {
-        p_email: email,
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
       });
       if (error) throw error;
       showSuccess('Password reset link sent!');

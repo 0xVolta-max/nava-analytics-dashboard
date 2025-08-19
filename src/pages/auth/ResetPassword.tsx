@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { createClient } from '@/lib/supabaseClient';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,23 +7,34 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { showError, showSuccess } from '@/utils/toast';
 import SafyLogo from '@/assets/logo.svg?react';
+import { useAuth } from '@/contexts/AuthContext';
 
 const supabase = createClient();
 
 const ResetPasswordPage = () => {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const [token, setToken] = useState<string | null>(null);
+  const { session } = useAuth();
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    const recoveryToken = searchParams.get('token');
-    if (recoveryToken) {
-      setToken(recoveryToken);
+    // Warten Sie, bis der Auth-Kontext die Sitzung aus dem URL-Fragment verarbeitet hat
+    const timer = setTimeout(() => {
+      if (session) {
+        setIsReady(true);
+      }
+    }, 500); // Eine kleine Verzögerung, um sicherzustellen, dass die Sitzung festgelegt ist
+
+    // Überprüfen Sie auch, ob die Sitzung bereits vorhanden ist
+    if (session) {
+        setIsReady(true);
+        clearTimeout(timer);
     }
-  }, [searchParams]);
+
+    return () => clearTimeout(timer);
+  }, [session]);
 
   const handlePasswordReset = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,18 +46,12 @@ const ResetPasswordPage = () => {
       showError("Die Passwörter stimmen nicht überein.");
       return;
     }
-    if (!token) {
-      showError("Ungültiger oder fehlender Reset-Token.");
-      return;
-    }
     setIsLoading(true);
     try {
-      const { error } = await supabase.rpc('nava_forgot_password_confirm', {
-        p_token: token,
-        p_new_password: password,
-      });
+      const { error } = await supabase.auth.updateUser({ password: password });
       if (error) throw error;
       showSuccess('Das Passwort wurde erfolgreich zurückgesetzt!');
+      await supabase.auth.signOut(); // Melden Sie den Benutzer nach der Aktualisierung ab
       navigate('/login');
     } catch (error: any) {
       showError(error.message || 'Das Passwort konnte nicht zurückgesetzt werden.');
@@ -55,13 +60,13 @@ const ResetPasswordPage = () => {
     }
   };
 
-  if (!token) {
+  if (!isReady) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
         <Card className="mx-auto max-w-sm w-full bg-white/10 backdrop-blur-xl border border-white/15 text-white">
           <CardHeader>
-            <CardTitle>Ungültiger Token</CardTitle>
-            <CardDescription>Der Link zum Zurücksetzen des Passworts ist ungültig oder abgelaufen.</CardDescription>
+            <CardTitle>Wird überprüft...</CardTitle>
+            <CardDescription>Überprüfung Ihrer Anfrage zum Zurücksetzen des Passworts.</CardDescription>
           </CardHeader>
         </Card>
       </div>
