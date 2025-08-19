@@ -18,6 +18,12 @@ const SignUpPage = () => {
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (password.length < 8) {
+      showError('Das Passwort muss mindestens 8 Zeichen lang sein.');
+      return;
+    }
+
     setIsLoading(true);
     try {
       const { error } = await supabase.rpc('nava_register_user', {
@@ -25,10 +31,9 @@ const SignUpPage = () => {
         p_password: password,
       });
       if (error) throw error;
-      showSuccess('Account created! Please check your email to verify.');
+      showSuccess('Konto erstellt! Bitte überprüfen Sie Ihre E-Mails zur Bestätigung.');
       navigate('/login');
-    } catch (error: any) {
-      showError(error.error_description || error.message);
+    } catch (error: any)      showError(error.error_description || error.message);
     } finally {
       setIsLoading(false);
     }
@@ -40,7 +45,7 @@ const SignUpPage = () => {
         <CardHeader className="text-center">
           <SafyLogo className="max-w-[150px] h-auto mx-auto mb-4" />
           <CardTitle className="text-2xl">Sign Up</CardTitle>
-          <CardDescription>Enter your information to create an account</CardDescription>
+          <CardDescription>Geben Sie Ihre Informationen ein, um ein Konto zu erstellen</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSignUp} className="grid gap-4">
@@ -68,11 +73,11 @@ const SignUpPage = () => {
               />
             </div>
             <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={isLoading}>
-              {isLoading ? 'Creating account...' : 'Create an account'}
+              {isLoading ? 'Konto wird erstellt...' : 'Konto erstellen'}
             </Button>
           </form>
           <div className="mt-4 text-center text-sm">
-            Already have an account?{' '}
+            Haben Sie bereits ein Konto?{' '}
             <Link to="/login" className="underline">
               Login
             </Link>

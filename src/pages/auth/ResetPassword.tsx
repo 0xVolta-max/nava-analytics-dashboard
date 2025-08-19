@@ -27,12 +27,16 @@ const ResetPasswordPage = () => {
 
   const handlePasswordReset = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (password.length < 8) {
+      showError("Das Passwort muss mindestens 8 Zeichen lang sein.");
+      return;
+    }
     if (password !== confirmPassword) {
-      showError("Passwords do not match.");
+      showError("Die Passwörter stimmen nicht überein.");
       return;
     }
     if (!token) {
-      showError("Invalid or missing reset token.");
+      showError("Ungültiger oder fehlender Reset-Token.");
       return;
     }
     setIsLoading(true);
@@ -42,10 +46,10 @@ const ResetPasswordPage = () => {
         p_new_password: password,
       });
       if (error) throw error;
-      showSuccess('Password has been reset successfully!');
+      showSuccess('Das Passwort wurde erfolgreich zurückgesetzt!');
       navigate('/login');
     } catch (error: any) {
-      showError(error.message || 'Failed to reset password.');
+      showError(error.message || 'Das Passwort konnte nicht zurückgesetzt werden.');
     } finally {
       setIsLoading(false);
     }
@@ -56,8 +60,8 @@ const ResetPasswordPage = () => {
       <div className="min-h-screen flex items-center justify-center p-4">
         <Card className="mx-auto max-w-sm w-full bg-white/10 backdrop-blur-xl border border-white/15 text-white">
           <CardHeader>
-            <CardTitle>Invalid Token</CardTitle>
-            <CardDescription>The password reset link is invalid or has expired.</CardDescription>
+            <CardTitle>Ungültiger Token</CardTitle>
+            <CardDescription>Der Link zum Zurücksetzen des Passworts ist ungültig oder abgelaufen.</CardDescription>
           </CardHeader>
         </Card>
       </div>
@@ -69,13 +73,13 @@ const ResetPasswordPage = () => {
       <Card className="mx-auto max-w-sm w-full bg-white/10 backdrop-blur-xl border border-white/15 text-white">
         <CardHeader className="text-center">
           <SafyLogo className="max-w-[150px] h-auto mx-auto mb-4" />
-          <CardTitle className="text-2xl">Reset Password</CardTitle>
-          <CardDescription>Enter your new password below.</CardDescription>
+          <CardTitle className="text-2xl">Passwort zurücksetzen</CardTitle>
+          <CardDescription>Geben Sie unten Ihr neues Passwort ein.</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handlePasswordReset} className="grid gap-4">
             <div className="grid gap-2">
-              <Label htmlFor="password">New Password</Label>
+              <Label htmlFor="password">Neues Passwort</Label>
               <Input
                 id="password"
                 type="password"
@@ -86,7 +90,7 @@ const ResetPasswordPage = () => {
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="confirm-password">Confirm New Password</Label>
+              <Label htmlFor="confirm-password">Neues Passwort bestätigen</Label>
               <Input
                 id="confirm-password"
                 type="password"
@@ -97,7 +101,7 @@ const ResetPasswordPage = () => {
               />
             </div>
             <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={isLoading}>
-              {isLoading ? 'Resetting...' : 'Reset Password'}
+              {isLoading ? 'Wird zurückgesetzt...' : 'Passwort zurücksetzen'}
             </Button>
           </form>
         </CardContent>
