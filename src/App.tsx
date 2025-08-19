@@ -12,6 +12,9 @@ import ProtectedRoute from "./components/auth/ProtectedRoute";
 import PublicRoute from "./components/auth/PublicRoute";
 import ForgotPasswordPage from "./pages/auth/ForgotPassword";
 import ResetPasswordPage from "./pages/auth/ResetPassword";
+import SettingsPage from "./pages/Settings";
+import ProfilePage from "./pages/Profile";
+import BillingPage from "./pages/Billing";
 
 const queryClient = new QueryClient();
 
@@ -32,6 +35,9 @@ const App = () => (
             
             <Route element={<ProtectedRoute />}>
               <Route path="/" element={<Dashboard />} />
+              <Route path="/settings" element={<SettingsPage />} />
+              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/billing" element={<BillingPage />} />
             </Route>
 
             <Route path="*" element={<NotFound />} />
