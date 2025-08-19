@@ -4,7 +4,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { getSocialWeatherFromSupabase, getOverallEngagementRate, getViralityMetrics } from "@/lib/social-weather/adapters/supabase";
+import { getSocialWeatherFromSupabase, getOverallEngagementRate, getViralityMetrics, getBuzzScore } from "@/lib/social-weather/adapters/supabase";
 import { getSocialWeather as getSocialWeatherFromMock } from "@/lib/social-weather/adapters/mock";
 import { formatEngagement } from "@/lib/social-weather/format";
 import { getWeatherIcon, getMomentum, getViralityLevel, viralityLevels, momentumLevels } from "@/lib/social-weather/mapping";
@@ -17,6 +17,7 @@ const SocialWeatherWidget = () => {
   const [data, setData] = React.useState<SocialWeather | null>(null);
   const [overallEngagement, setOverallEngagement] = React.useState<number | null>(null);
   const [viralityScore, setViralityScore] = React.useState<number | null>(null);
+  const [buzzScore, setBuzzScore] = React.useState<number | null>(null);
   const [isLoading, setIsLoading] = React.useState(true);
   const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
   const [selectedPlatform, setSelectedPlatform] = React.useState<Platform | null>(null);
@@ -25,15 +26,17 @@ const SocialWeatherWidget = () => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        // Fetch all data points concurrently
-        const [weatherData, engagementRate, virality] = await Promise.all([
+        // Fetch all data points concurrently, including buzz score
+        const [weatherData, engagementRate, virality, buzz] = await Promise.all([
           getSocialWeatherFromSupabase(),
           getOverallEngagementRate(),
-          getViralityMetrics()
+          getViralityMetrics(),
+          getBuzzScore()
         ]);
         setData(weatherData);
         setOverallEngagement(engagementRate);
         setViralityScore(virality);
+        setBuzzScore(buzz);
       } catch (error) {
         console.error("Fehler im SocialWeatherWidget (Supabase), verwende Mock-Daten:", error);
         // Fallback to mock data if any of the Supabase calls fail
@@ -44,6 +47,8 @@ const SocialWeatherWidget = () => {
           setOverallEngagement(mockData.global.engagementE);
           // Mock virality score (0-10)
           setViralityScore(Math.random() * 10);
+          // Use buzz pressure from mock data as a fallback
+          setBuzzScore(mockData.global.buzzPressure);
         } catch (mockError) {
           console.error("Fehler beim Laden der Mock-Daten:", mockError);
         }
@@ -59,7 +64,7 @@ const SocialWeatherWidget = () => {
     setIsDrawerOpen(true);
   };
 
-  if (isLoading || !data || overallEngagement === null || viralityScore === null) {
+  if (isLoading || !data || overallEngagement === null || viralityScore === null || buzzScore === null) {
     return <Skeleton className="bg-white/10 w-full h-[380px] rounded-2xl" />;
   }
 
@@ -162,7 +167,7 @@ const SocialWeatherWidget = () => {
                  <div className="flex items-center gap-1.5 mb-1">
                     <span className="text-white/70 text-xs">Buzz Level</span>
                  </div>
-                 <Progress value={data.global.buzzPressure} className="h-2 bg-white/20" />
+                 <Progress value={buzzScore} className="h-2 bg-white/20" />
               </div>
             </div>
           </div>

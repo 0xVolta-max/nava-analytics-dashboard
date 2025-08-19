@@ -73,3 +73,28 @@ export const getViralityMetrics = async (): Promise<number> => {
 
   return data;
 };
+
+/**
+ * Ruft den Buzz Score von einer Supabase RPC-Funktion ab.
+ * 
+ * Diese Funktion geht davon aus, dass Sie eine Funktion in Ihrer Supabase-Datenbank
+ * mit dem Namen `nava_calculate_buzz_score` haben, die eine einzelne
+ * Zahl (Score von 0 bis 100) zurückgibt.
+ */
+export const getBuzzScore = async (): Promise<number> => {
+  const supabase = createClient();
+
+  const { data, error } = await supabase.rpc('nava_calculate_buzz_score');
+
+  if (error) {
+    console.error("Fehler beim Abrufen des Buzz Score von Supabase:", error);
+    throw new Error("Konnte Buzz Score nicht laden.");
+  }
+
+  if (typeof data !== 'number') {
+    console.error("Unerwarteter Datentyp von nava_calculate_buzz_score:", typeof data);
+    throw new Error("Ungültiges Datenformat für Buzz Score.");
+  }
+
+  return data;
+};
