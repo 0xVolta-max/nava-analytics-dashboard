@@ -20,15 +20,28 @@ const LoginPage = () => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
+      const { data, error } = await supabase.rpc('nava_login_user', {
+        p_email: email,
+        p_password: password,
       });
+
       if (error) throw error;
-      showSuccess('Logged in successfully!');
-      navigate('/');
+
+      if (data && data.access_token && data.refresh_token) {
+        const { error: sessionError } = await supabase.auth.setSession({
+          access_token: data.access_token,
+          refresh_token: data.refresh_token,
+        });
+
+        if (sessionError) throw sessionError;
+
+        showSuccess('Logged in successfully!');
+        navigate('/');
+      } else {
+        throw new Error('Login failed: Invalid response from server.');
+      }
     } catch (error: any) {
-      showError(error.error_description || error.message);
+      showError(error.message || 'An unknown error occurred.');
     } finally {
       setIsLoading(false);
     }
@@ -59,6 +72,12 @@ const LoginPage = () => {
             <div className="grid gap-2">
               <div className="flex items-center">
                 <Label htmlFor="password">Password</Label>
+                <Link
+                  to="/forgot-password"
+                  className="ml-auto inline-block text-sm underline"
+                >
+                  Forgot your password?
+                </Link>
               </div>
               <Input
                 id="password"

@@ -20,9 +20,9 @@ const SignUpPage = () => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
+      const { error } = await supabase.rpc('nava_register_user', {
+        p_email: email,
+        p_password: password,
       });
       if (error) throw error;
       showSuccess('Account created! Please check your email to verify.');
