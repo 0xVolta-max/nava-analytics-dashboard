@@ -33,7 +33,8 @@ const SignUpPage = () => {
       if (error) throw error;
       showSuccess('Konto erstellt! Bitte überprüfen Sie Ihre E-Mails zur Bestätigung.');
       navigate('/login');
-    } catch (error: any)      showError(error.error_description || error.message);
+    } catch (error: any) {
+      showError(error.error_description || error.message);
     } finally {
       setIsLoading(false);
     }
