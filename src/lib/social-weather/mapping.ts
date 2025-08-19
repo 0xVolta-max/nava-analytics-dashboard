@@ -32,10 +32,10 @@ export const viralityLevels = [
   { label: 'Very Low', icon: Minus, color: 'text-white/70' },
 ];
 
-export const getViralChance = (chance: number): { count: number; icon: LucideIcon; label: string; color: string } => {
-  if (chance > 75) return { count: 3, ...viralityLevels[0] };
-  if (chance > 50) return { count: 2, ...viralityLevels[1] };
-  if (chance > 25) return { count: 1, ...viralityLevels[2] };
+export const getViralityLevel = (score: number): { count: number; icon: LucideIcon; label: string; color: string } => {
+  if (score > 8.5) return { count: 3, ...viralityLevels[0] };
+  if (score > 6.0) return { count: 2, ...viralityLevels[1] };
+  if (score > 3.0) return { count: 1, ...viralityLevels[2] };
   return { count: 0, ...viralityLevels[3] };
 };
 

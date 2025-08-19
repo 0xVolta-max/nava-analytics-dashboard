@@ -48,3 +48,28 @@ export const getOverallEngagementRate = async (): Promise<number> => {
 
   return data;
 };
+
+/**
+ * Ruft den Virality Score von einer Supabase RPC-Funktion ab.
+ * 
+ * Diese Funktion geht davon aus, dass Sie eine Funktion in Ihrer Supabase-Datenbank
+ * mit dem Namen `nava_calculate_virality_metrics` haben, die eine einzelne
+ * Zahl (Score von 0.0 bis 10.0) zurückgibt.
+ */
+export const getViralityMetrics = async (): Promise<number> => {
+  const supabase = createClient();
+
+  const { data, error } = await supabase.rpc('nava_calculate_virality_metrics');
+
+  if (error) {
+    console.error("Fehler beim Abrufen der Virality Metrics von Supabase:", error);
+    throw new Error("Konnte Virality Metrics nicht laden.");
+  }
+
+  if (typeof data !== 'number') {
+    console.error("Unerwarteter Datentyp von nava_calculate_virality_metrics:", typeof data);
+    throw new Error("Ungültiges Datenformat für Virality Score.");
+  }
+
+  return data;
+};

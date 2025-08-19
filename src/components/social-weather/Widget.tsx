@@ -4,10 +4,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { getSocialWeatherFromSupabase, getOverallEngagementRate } from "@/lib/social-weather/adapters/supabase";
+import { getSocialWeatherFromSupabase, getOverallEngagementRate, getViralityMetrics } from "@/lib/social-weather/adapters/supabase";
 import { getSocialWeather as getSocialWeatherFromMock } from "@/lib/social-weather/adapters/mock";
 import { formatEngagement } from "@/lib/social-weather/format";
-import { getWeatherIcon, getMomentum, getViralChance, viralityLevels, momentumLevels } from "@/lib/social-weather/mapping";
+import { getWeatherIcon, getMomentum, getViralityLevel, viralityLevels, momentumLevels } from "@/lib/social-weather/mapping";
 import type { SocialWeather, Platform } from "@/lib/social-weather/types";
 import { StatusIcon } from './StatusIcon';
 import { PlatformMini } from './PlatformMini';
@@ -16,6 +16,7 @@ import { DetailDrawer } from './DetailDrawer';
 const SocialWeatherWidget = () => {
   const [data, setData] = React.useState<SocialWeather | null>(null);
   const [overallEngagement, setOverallEngagement] = React.useState<number | null>(null);
+  const [viralityScore, setViralityScore] = React.useState<number | null>(null);
   const [isLoading, setIsLoading] = React.useState(true);
   const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
   const [selectedPlatform, setSelectedPlatform] = React.useState<Platform | null>(null);
@@ -24,13 +25,15 @@ const SocialWeatherWidget = () => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        // Fetch both data points concurrently
-        const [weatherData, engagementRate] = await Promise.all([
+        // Fetch all data points concurrently
+        const [weatherData, engagementRate, virality] = await Promise.all([
           getSocialWeatherFromSupabase(),
-          getOverallEngagementRate()
+          getOverallEngagementRate(),
+          getViralityMetrics()
         ]);
         setData(weatherData);
         setOverallEngagement(engagementRate);
+        setViralityScore(virality);
       } catch (error) {
         console.error("Fehler im SocialWeatherWidget (Supabase), verwende Mock-Daten:", error);
         // Fallback to mock data if any of the Supabase calls fail
@@ -39,6 +42,8 @@ const SocialWeatherWidget = () => {
           setData(mockData);
           // Use the engagement rate from mock data as a fallback
           setOverallEngagement(mockData.global.engagementE);
+          // Mock virality score (0-10)
+          setViralityScore(Math.random() * 10);
         } catch (mockError) {
           console.error("Fehler beim Laden der Mock-Daten:", mockError);
         }
@@ -54,13 +59,13 @@ const SocialWeatherWidget = () => {
     setIsDrawerOpen(true);
   };
 
-  if (isLoading || !data || overallEngagement === null) {
+  if (isLoading || !data || overallEngagement === null || viralityScore === null) {
     return <Skeleton className="bg-white/10 w-full h-[380px] rounded-2xl" />;
   }
 
   const weather = getWeatherIcon(data.global.viralScore);
   const momentum = getMomentum(data.global.momentum);
-  const viralChance = getViralChance(data.global.viralChance12h);
+  const virality = getViralityLevel(viralityScore);
 
   return (
     <>
@@ -143,12 +148,12 @@ const SocialWeatherWidget = () => {
                         ))}
                     </div>
                     <div className="flex items-center gap-0 h-4"> {/* Virality icons */}
-                        {viralChance.count > 0 ? (
-                        Array.from({ length: viralChance.count }).map((_, i) => (
-                            <viralChance.icon key={i} className={`h-4 w-4 ${viralChance.color}`} />
+                        {virality.count > 0 ? (
+                        Array.from({ length: virality.count }).map((_, i) => (
+                            <virality.icon key={i} className={`h-4 w-4 ${virality.color}`} />
                         ))
                         ) : (
-                        <viralChance.icon className={`h-4 w-4 ${viralChance.color}`} />
+                        <virality.icon className={`h-4 w-4 ${virality.color}`} />
                         )}
                     </div>
                 </div>
