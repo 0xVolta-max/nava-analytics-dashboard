@@ -4,7 +4,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { getSocialWeatherFromSupabase } from "@/lib/social-weather/adapters/supabase";
+import { getSocialWeatherFromSupabase, getOverallEngagementRate } from "@/lib/social-weather/adapters/supabase";
 import { getSocialWeather as getSocialWeatherFromMock } from "@/lib/social-weather/adapters/mock";
 import { formatEngagement } from "@/lib/social-weather/format";
 import { getWeatherIcon, getMomentum, getViralChance, viralityLevels, momentumLevels } from "@/lib/social-weather/mapping";
@@ -15,6 +15,7 @@ import { DetailDrawer } from './DetailDrawer';
 
 const SocialWeatherWidget = () => {
   const [data, setData] = React.useState<SocialWeather | null>(null);
+  const [overallEngagement, setOverallEngagement] = React.useState<number | null>(null);
   const [isLoading, setIsLoading] = React.useState(true);
   const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
   const [selectedPlatform, setSelectedPlatform] = React.useState<Platform | null>(null);
@@ -23,14 +24,21 @@ const SocialWeatherWidget = () => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        const weatherData = await getSocialWeatherFromSupabase();
+        // Fetch both data points concurrently
+        const [weatherData, engagementRate] = await Promise.all([
+          getSocialWeatherFromSupabase(),
+          getOverallEngagementRate()
+        ]);
         setData(weatherData);
+        setOverallEngagement(engagementRate);
       } catch (error) {
         console.error("Fehler im SocialWeatherWidget (Supabase), verwende Mock-Daten:", error);
-        // If Supabase fails, use mock data as a fallback
+        // Fallback to mock data if any of the Supabase calls fail
         try {
           const mockData = await getSocialWeatherFromMock();
           setData(mockData);
+          // Use the engagement rate from mock data as a fallback
+          setOverallEngagement(mockData.global.engagementE);
         } catch (mockError) {
           console.error("Fehler beim Laden der Mock-Daten:", mockError);
         }
@@ -46,7 +54,7 @@ const SocialWeatherWidget = () => {
     setIsDrawerOpen(true);
   };
 
-  if (isLoading || !data) {
+  if (isLoading || !data || overallEngagement === null) {
     return <Skeleton className="bg-white/10 w-full h-[380px] rounded-2xl" />;
   }
 
@@ -68,7 +76,7 @@ const SocialWeatherWidget = () => {
           </div>
           <div className="space-y-3 flex flex-col justify-center">
             <div>
-              <p className="text-4xl lg:text-5xl font-bold text-white">{formatEngagement(data.global.engagementE)}</p>
+              <p className="text-4xl lg:text-5xl font-bold text-white">{formatEngagement(overallEngagement)}</p>
               <p className="text-xs text-white/70">Overall Engagement Rate</p>
             </div>
             <div className="space-y-2 text-xs">
