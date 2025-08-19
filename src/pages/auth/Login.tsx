@@ -20,26 +20,21 @@ const LoginPage = () => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const { data, error } = await supabase.rpc('nava_login_user', {
-        p_email: email,
-        p_password: password,
+      const { error } = await supabase.auth.signInWithPassword({
+        email: email,
+        password: password,
       });
 
-      if (error) throw error;
-
-      if (data && data.access_token && data.refresh_token) {
-        const { error: sessionError } = await supabase.auth.setSession({
-          access_token: data.access_token,
-          refresh_token: data.refresh_token,
-        });
-
-        if (sessionError) throw sessionError;
-
-        showSuccess('Logged in successfully!');
-        navigate('/');
-      } else {
-        throw new Error('Login failed: Invalid response from server.');
+      if (error) {
+        if (error.message.includes('Email not confirmed')) {
+          showError('Bitte bestätigen Sie Ihre E-Mail-Adresse, bevor Sie sich anmelden.');
+          return;
+        }
+        throw error;
       }
+
+      showSuccess('Logged in successfully!');
+      navigate('/');
     } catch (error: any) {
       showError(error.message || 'An unknown error occurred.');
     } finally {

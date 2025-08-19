@@ -26,14 +26,14 @@ const SignUpPage = () => {
 
     setIsLoading(true);
     try {
-      const { error } = await supabase.rpc('nava_register_user', {
-        p_email: email,
-        p_password: password,
+      const { error } = await supabase.auth.signUp({
+        email: email,
+        password: password,
       });
       if (error) throw error;
       showSuccess('Konto erstellt! Bitte überprüfen Sie Ihre E-Mails zur Bestätigung.');
       navigate('/login');
-    } catch (error: any) {
+    } catch (error: any)      {
       showError(error.error_description || error.message);
     } finally {
       setIsLoading(false);
