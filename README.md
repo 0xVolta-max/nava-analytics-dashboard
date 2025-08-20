@@ -19,7 +19,7 @@ Willkommen zu Ihrem NAVA Analytics Dashboard, einer leistungsstarken und visuell
 
 ### Next Steps (Todos)
 - [ ] **Backend & Data Integration (High Priority)**:
-    - [ ] Address Supabase email configuration issues for full authentication functionality.
+    - [ ] **Supabase Configuration**: Ensure the `SITE_URL` in your Supabase `.env` is correctly set to your Vercel app's URL for proper authentication redirects (e.g., after email confirmation).
     - [ ] Replace `mockData.ts` with live API calls for dashboard metrics.
     - [ ] Connect real user data to the `UserNav` component.
 - [ ] **Implement Data Filtering**:
@@ -40,3 +40,7 @@ Willkommen zu Ihrem NAVA Analytics Dashboard, einer leistungsstarken und visuell
 This project is configured for easy deployment on [Vercel](https://vercel.com/). The `vercel.json` file ensures that all routes are correctly handled.
 
 To deploy, connect your Git repository to a Vercel project. Every push to the main branch will automatically trigger a new deployment.
+
+## Database & SQL
+
+All SQL scripts and database-related documentation can be found in the `supabase/sql` directory.
