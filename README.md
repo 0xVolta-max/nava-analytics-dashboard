@@ -20,6 +20,7 @@ Willkommen zu Ihrem NAVA Analytics Dashboard, einer leistungsstarken und visuell
 ### Next Steps (Todos)
 - [ ] **Backend & Data Integration (High Priority)**:
     - [ ] **Supabase Configuration**: Ensure the `SITE_URL` in your Supabase `.env` is correctly set to your Vercel app's URL for proper authentication redirects (e.g., after email confirmation).
+    - [ ] **Vercel Environment Variables**: Add `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` to your Vercel project's environment variables (Project Settings > Environment Variables). These are crucial for the app to connect to Supabase on Vercel.
     - [ ] Replace `mockData.ts` with live API calls for dashboard metrics.
     - [ ] Connect real user data to the `UserNav` component.
 - [ ] **Implement Data Filtering**:
