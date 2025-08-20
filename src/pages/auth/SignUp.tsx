@@ -38,7 +38,7 @@ const SignUpPage = () => {
         const { error: profileError } = await supabase
           .from('nava_user_authentication')
           .insert([
-            { id: data.user.id, email: data.user.email }
+            { user_id: data.user.id, email: data.user.email } // Changed 'id' to 'user_id'
           ]);
 
         if (profileError) {
