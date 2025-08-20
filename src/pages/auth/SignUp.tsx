@@ -26,11 +26,30 @@ const SignUpPage = () => {
 
     setIsLoading(true);
     try {
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email: email,
         password: password,
       });
+
       if (error) throw error;
+
+      // If user is created successfully in auth.users, create a profile entry
+      if (data.user) {
+        const { error: profileError } = await supabase
+          .from('nava_user_authentication')
+          .insert([
+            { id: data.user.id, email: data.user.email }
+          ]);
+
+        if (profileError) {
+          console.error("Fehler beim Erstellen des Benutzerprofils:", profileError);
+          showError('Konto erstellt, aber Profil konnte nicht angelegt werden: ' + profileError.message);
+          // Optional: Sie könnten hier den auth.user löschen, wenn das Profil nicht erstellt werden kann
+          // await supabase.auth.admin.deleteUser(data.user.id);
+          return;
+        }
+      }
+
       showSuccess('Konto erstellt! Bitte überprüfen Sie Ihre E-Mails zur Bestätigung.');
       navigate('/login');
     } catch (error: any)      {
