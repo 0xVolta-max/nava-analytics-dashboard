@@ -1,15 +1,14 @@
--- Deaktivieren Sie RLS vorübergehend, um die alte Richtlinie zu löschen
-    ALTER TABLE nava_user_authentication DISABLE ROW LEVEL SECURITY;
+-- Funktion zum Erstellen eines Profils für neue Benutzer
+    CREATE OR REPLACE FUNCTION public.handle_new_user()
+    RETURNS TRIGGER AS $$
+    BEGIN
+      INSERT INTO public.nava_user_authentication (user_id, email)
+      VALUES (NEW.id, NEW.email);
+      RETURN NEW;
+    END;
+    $$ LANGUAGE plpgsql SECURITY DEFINER;
 
-    -- Löschen Sie die alte Richtlinie, die auf die 'id'-Spalte verwiesen hat
-    DROP POLICY IF EXISTS "Allow authenticated users to insert their own profile" ON nava_user_authentication;
-
-    -- Aktivieren Sie RLS wieder
-    ALTER TABLE nava_user_authentication ENABLE ROW LEVEL SECURITY;
-
-    -- Erstellen Sie die NEUE Richtlinie, die authentifizierten Benutzern das Einfügen ihres eigenen Profils erlaubt
-    -- und dabei die umbenannte 'user_id'-Spalte verwendet
-    CREATE POLICY "Allow authenticated users to insert their own profile"
-    ON nava_user_authentication
-    FOR INSERT
-    WITH CHECK (auth.uid() = user_id);
+    -- Trigger, der die Funktion aufruft, nachdem ein neuer Benutzer in auth.users eingefügt wurde
+    CREATE TRIGGER on_auth_user_created
+      AFTER INSERT ON auth.users
+      FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
