@@ -5,12 +5,48 @@ DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 DROP FUNCTION IF EXISTS public.handle_new_user();
 
 -- Funktion zum Erstellen eines Profils für neue Benutzer
--- Fügt user_id, email, created_at und updated_at ein
+-- Fügt alle Spalten mit Standardwerten ein
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
-  INSERT INTO public.nava_user_authentication (user_id, email, created_at, updated_at)
-  VALUES (NEW.id, NEW.email, now(), now()); -- 'now()' setzt den aktuellen Zeitstempel
+  INSERT INTO public.nava_user_authentication (
+    user_id,
+    email,
+    username,
+    password_hash,
+    salt,
+    first_name,
+    last_name,
+    profile_picture_url,
+    email_verified,
+    is_active,
+    last_login,
+    login_attempts,
+    locked_until,
+    reset_token,
+    reset_token_expires,
+    created_at,
+    updated_at
+  )
+  VALUES (
+    NEW.id,
+    NEW.email,
+    '', -- Standardwert für username
+    '', -- Standardwert für password_hash (WARNUNG: Dies ist ein Platzhalter. Wenn Sie Passwörter hier verwalten, muss dies korrekt gehandhabt werden.)
+    '', -- Standardwert für salt (WARNUNG: Dies ist ein Platzhalter.)
+    '', -- Standardwert für first_name
+    '', -- Standardwert für last_name
+    NULL, -- Standardwert für profile_picture_url (NULL, wenn nullable, sonst '')
+    FALSE, -- Standardwert für email_verified (Supabase Auth verwaltet dies, aber hier für NOT NULL gesetzt)
+    TRUE, -- Standardwert für is_active
+    NULL, -- Standardwert für last_login (NULL, wenn nullable, sonst now())
+    0, -- Standardwert für login_attempts
+    NULL, -- Standardwert für locked_until (NULL, wenn nullable)
+    NULL, -- Standardwert für reset_token (NULL, wenn nullable)
+    NULL, -- Standardwert für reset_token_expires (NULL, wenn nullable)
+    now(), -- Standardwert für created_at
+    now()  -- Standardwert für updated_at
+  );
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
