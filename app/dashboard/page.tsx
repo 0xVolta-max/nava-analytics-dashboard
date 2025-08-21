@@ -1,7 +1,7 @@
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { MetricCard } from "@/components/dashboard/MetricCard";
 import { PlatformChart } from "@/components/dashboard/PlatformChart";
-import { NicheChart } => "@/components/dashboard/NicheChart";
+import { NicheChart } from "@/components/dashboard/NicheChart";
 import TogglableWidget from "@/components/dashboard/TogglableWidget";
 import { mockData } from "@/lib/mockData";
 import SafyLogo from '@/assets/logo.svg?react';
