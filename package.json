@@ -1,13 +1,4 @@
 {
-  "name": "nava-analytics-dashboard",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
     "@radix-ui/react-accordion": "^1.2.0",
@@ -37,7 +28,6 @@
     "@radix-ui/react-toggle": "^1.1.0",
     "@radix-ui/react-toggle-group": "^1.1.0",
     "@radix-ui/react-tooltip": "^1.1.4",
-    "@supabase/ssr": "^0.6.1",
     "@svgr/webpack": "^8.1.0",
     "@tanstack/react-query": "^5.56.2",
     "chart.js": "^4.5.0",
@@ -48,14 +38,13 @@
     "embla-carousel-react": "^8.3.0",
     "input-otp": "^1.2.4",
     "lucide-react": "^0.462.0",
-    "next": "^14.2.5",
-    "next-themes": "^0.3.0",
     "react": "^18.3.1",
     "react-chartjs-2": "^5.3.0",
     "react-day-picker": "^8.10.1",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.53.0",
     "react-resizable-panels": "^2.1.3",
+    "react-router-dom": "^6.25.1",
     "recharts": "^2.12.7",
     "sonner": "^1.5.0",
     "tailwind-merge": "^2.5.2",

@@ -18,14 +18,14 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { useAuth } from "@/contexts/AuthContext"
 import { createClient } from "@/lib/supabaseClient"
-import { useRouter } from "next/navigation"
+import { useNavigate } from "react-router-dom"
 import { showError, showSuccess } from "@/utils/toast"
 
 const supabase = createClient();
 
 export function UserNav() {
   const { user } = useAuth();
-  const router = useRouter();
+  const navigate = useNavigate();
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
@@ -33,7 +33,7 @@ export function UserNav() {
       showError(error.message);
     } else {
       showSuccess("Logged out successfully");
-      router.push('/auth/login');
+      navigate('/auth/login');
     }
   };
 
@@ -64,15 +64,15 @@ export function UserNav() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator className="bg-white/20" />
         <DropdownMenuGroup>
-          <DropdownMenuItem onClick={() => router.push('/profile')}>
+          <DropdownMenuItem onClick={() => navigate('/profile')}>
             Profile
             <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => router.push('/billing')}>
+          <DropdownMenuItem onClick={() => navigate('/billing')}>
             Billing
             <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => router.push('/settings')}>
+          <DropdownMenuItem onClick={() => navigate('/settings')}>
             Settings
             <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
           </DropdownMenuItem>

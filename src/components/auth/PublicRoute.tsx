@@ -1,19 +1,19 @@
 "use client";
 
 import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Skeleton } from '@/components/ui/skeleton';
 
 const PublicRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, isLoading } = useAuth();
-  const router = useRouter();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!isLoading && user) {
-      router.replace('/');
+      navigate('/', { replace: true });
     }
-  }, [user, isLoading, router]);
+  }, [user, isLoading, navigate]);
 
   if (isLoading) {
     return (
