@@ -32,25 +32,6 @@ const SignUpPage = () => {
     }
   }, [turnstileWidgetId]);
 
-  const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (password.length < 8) {
-      showError('Das Passwort muss mindestens 8 Zeichen lang sein.');
-      return;
-    }
-
-    setIsLoading(true);
-    setTurnstileToken(null); // Reset token before execution
-    if (turnstileWidgetId) {
-      executeTurnstile(turnstileWidgetId); // Manually execute invisible Turnstile
-    } else {
-      showError('Turnstile widget not loaded. Please refresh the page.');
-      setIsLoading(false);
-      return;
-    }
-  };
-
   useEffect(() => {
     const verifyAndSignUp = async () => {
       if (!turnstileToken) return; // Wait for token to be set
@@ -82,8 +63,9 @@ const SignUpPage = () => {
         navigate('/login');
       } catch (error: any) {
         showError(error.message || 'Ein unbekannter Fehler ist aufgetreten.');
-        if (turnstileWidgetId) {
-          resetTurnstile(turnstileWidgetId); // Reset Turnstile on error
+        const typedWindow = window as TurnstileWindow; // Explicitly cast window
+        if (turnstileWidgetId && typedWindow.turnstile) {
+          typedWindow.turnstile.reset(turnstileWidgetId); // Reset Turnstile on error
         }
       } finally {
         setIsLoading(false);
@@ -94,6 +76,25 @@ const SignUpPage = () => {
       verifyAndSignUp();
     }
   }, [turnstileToken, email, password, navigate, turnstileWidgetId]);
+
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (password.length < 8) {
+      showError('Das Passwort muss mindestens 8 Zeichen lang sein.');
+      return;
+    }
+
+    setIsLoading(true);
+    setTurnstileToken(null); // Reset token before execution
+    if (turnstileWidgetId) {
+      executeTurnstile(turnstileWidgetId); // Manually execute invisible Turnstile
+    } else {
+      showError('Turnstile widget not loaded. Please refresh the page.');
+      setIsLoading(false);
+      return;
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
