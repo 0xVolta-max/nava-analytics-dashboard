@@ -16,6 +16,7 @@ Willkommen zu Ihrem NAVA Analytics Dashboard, einer leistungsstarken und visuell
 - [x] Fine-tuned widget layouts and component positioning for improved visual consistency.
 - [x] Implemented user authentication (Login, Sign Up, Forgot/Reset Password) with Supabase.
 - [x] Set up protected and public routes using React Router.
+- [x] **Integrated Cloudflare Turnstile for enhanced security on Login/Signup.**
 
 ### Next Steps (Todos)
 - [ ] **Backend & Data Integration (High Priority)**:
@@ -41,6 +42,14 @@ Willkommen zu Ihrem NAVA Analytics Dashboard, einer leistungsstarken und visuell
 This project is configured for easy deployment on [Vercel](https://vercel.com/). The `vercel.json` file ensures that all routes are correctly handled.
 
 To deploy, connect your Git repository to a Vercel project. Every push to the main branch will automatically trigger a new deployment.
+
+**Wichtige Hinweise zur Turnstile-Integration:**
+
+*   **Umgebungsvariablen:** Für die Cloudflare Turnstile-Integration musst du die folgenden Umgebungsvariablen in deinem Vercel-Projekt (Project Settings > Environment Variables) setzen:
+    *   `VITE_TURNSTILE_SITE_KEY`: Dies ist dein "Site Key" für das Frontend.
+    *   `TURNSTILE_SECRET_KEY`: Dies ist dein "Secret Key" für die Backend-Verifizierung.
+    *   `VITE_VERIFY_TURNSTILE_API_URL`: Setze diesen auf `/api/verify-turnstile`.
+*   **Lokale Entwicklung:** Die `api/verify-turnstile.ts`-Datei ist eine [Vercel Serverless Function](https://vercel.com/docs/functions/serverless-functions). Sie wird **nicht** vom lokalen Vite-Entwicklungsserver ausgeführt. Daher wird die Turnstile-Verifizierung nur funktionieren, wenn die Anwendung auf Vercel bereitgestellt wird. Bei lokaler Ausführung kann es zu `404 Not Found`-Fehlern für diesen Endpunkt kommen.
 
 ## Database & SQL
 
