@@ -7,10 +7,12 @@ export const createClient = () => {
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   if (!supabaseUrl) {
-    throw new Error("Missing NEXT_PUBLIC_SUPABASE_URL environment variable. Please set it in your .env.local file.");
+    console.error("Missing NEXT_PUBLIC_SUPABASE_URL environment variable. Please set it in your .env.local file or Vercel environment variables.");
+    throw new Error("Missing NEXT_PUBLIC_SUPABASE_URL environment variable.");
   }
   if (!supabaseAnonKey) {
-    throw new Error("Missing NEXT_PUBLIC_SUPABASE_ANON_KEY environment variable. Please set it in your .env.local file.");
+    console.error("Missing NEXT_PUBLIC_SUPABASE_ANON_KEY environment variable. Please set it in your .env.local file or Vercel environment variables.");
+    throw new Error("Missing NEXT_PUBLIC_SUPABASE_ANON_KEY environment variable.");
   }
 
   // For client-side usage
@@ -23,10 +25,12 @@ export const createServerSupabaseClient = (cookies: ReadonlyRequestCookies) => {
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   if (!supabaseUrl) {
-    throw new Error("Missing NEXT_PUBLIC_SUPABASE_URL environment variable. Please set it in your .env.local file.");
+    console.error("Missing NEXT_PUBLIC_SUPABASE_URL environment variable. Please set it in your .env.local file or Vercel environment variables.");
+    throw new Error("Missing NEXT_PUBLIC_SUPABASE_URL environment variable.");
   }
   if (!supabaseAnonKey) {
-    throw new Error("Missing NEXT_PUBLIC_SUPABASE_ANON_KEY environment variable. Please set it in your .env.local file.");
+    console.error("Missing NEXT_PUBLIC_SUPABASE_ANON_KEY environment variable. Please set it in your .env.local file or Vercel environment variables.");
+    throw new Error("Missing NEXT_PUBLIC_SUPABASE_ANON_KEY environment variable.");
   }
 
   return createServerClient(supabaseUrl, supabaseAnonKey, {

@@ -19,6 +19,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  console.log("RootLayout is rendering!"); // Added for debugging
   return (
     <html lang="en" className="dark">
       <body className={inter.className}>
