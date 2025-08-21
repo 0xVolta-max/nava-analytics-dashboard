@@ -4,8 +4,8 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "@/contexts/AuthContext";
+import QueryProvider from "@/components/providers/QueryProvider"; // Import the new QueryProvider
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -13,9 +13,6 @@ export const metadata: Metadata = {
   title: "NAVA Analytics Dashboard",
   description: "A powerful and visually appealing interface for tracking key content creation metrics.",
 };
-
-// Create a client for react-query outside the component to prevent re-creation on re-renders
-const queryClient = new QueryClient();
 
 export default function RootLayout({
   children,
@@ -25,7 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={inter.className}>
-        <QueryClientProvider client={queryClient}>
+        <QueryProvider> {/* Use the new QueryProvider here */}
           <TooltipProvider>
             <Toaster />
             <Sonner />
@@ -33,7 +30,7 @@ export default function RootLayout({
               {children}
             </AuthProvider>
           </TooltipProvider>
-        </QueryClientProvider>
+        </QueryProvider>
       </body>
     </html>
   );
