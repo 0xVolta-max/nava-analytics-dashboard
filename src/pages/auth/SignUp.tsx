@@ -63,7 +63,7 @@ const SignUpPage = () => {
         navigate('/login');
       } catch (error: any) {
         showError(error.message || 'Ein unbekannter Fehler ist aufgetreten.');
-        if (turnstileWidgetId) { // Removed window.turnstile check as resetTurnstile handles it
+        if (turnstileWidgetId) {
           resetTurnstile(turnstileWidgetId); // Use the imported function
         }
       } finally {
