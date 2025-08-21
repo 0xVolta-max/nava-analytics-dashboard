@@ -36,8 +36,8 @@ const LoginPage = () => {
       setTurnstileWidgetId(id);
     } else if (!isTurnstileRequired && turnstileWidgetId) {
       // If Turnstile is no longer required, remove the widget
-      if (window.turnstile) {
-        window.turnstile.reset(turnstileWidgetId);
+      if (window.turnstile) { // Keep this check for safety, as window.turnstile might not be loaded yet
+        resetTurnstile(turnstileWidgetId); // Use the imported function
         window.turnstile.remove(turnstileWidgetId);
       }
       setTurnstileWidgetId(undefined);
@@ -84,8 +84,8 @@ const LoginPage = () => {
       navigate('/');
     } catch (error: any) {
       showError(error.message || 'An unknown error occurred.');
-      if (isTurnstileRequired && turnstileWidgetId && window.turnstile) {
-        window.turnstile.reset(turnstileWidgetId); // Reset Turnstile on error
+      if (isTurnstileRequired && turnstileWidgetId) { // Removed window.turnstile check as resetTurnstile handles it
+        resetTurnstile(turnstileWidgetId); // Use the imported function
       }
     } finally {
       setIsLoading(false);
@@ -115,8 +115,8 @@ const LoginPage = () => {
         await attemptLogin();
       } catch (error: any) {
         showError(error.message || 'Ein unbekannter Fehler ist aufgetreten.');
-        if (turnstileWidgetId && window.turnstile) {
-          window.turnstile.reset(turnstileWidgetId); // Reset Turnstile on error
+        if (turnstileWidgetId) { // Removed window.turnstile check as resetTurnstile handles it
+          resetTurnstile(turnstileWidgetId); // Use the imported function
         }
       } finally {
         setIsLoading(false);
