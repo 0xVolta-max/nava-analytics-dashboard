@@ -5,14 +5,11 @@ export const createClient = () => {
   const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
   if (!supabaseUrl) {
-    console.error("Missing VITE_SUPABASE_URL environment variable. Please set it in your .env.local file or Vercel environment variables.");
-    throw new Error("Missing VITE_SUPABASE_URL environment variable.");
+    throw new Error("Missing VITE_SUPABASE_URL environment variable. Please set it in your .env.local file.");
   }
   if (!supabaseAnonKey) {
-    console.error("Missing VITE_SUPABASE_ANON_KEY environment variable. Please set it in your .env.local file or Vercel environment variables.");
-    throw new Error("Missing VITE_SUPABASE_ANON_KEY environment variable.");
+    throw new Error("Missing VITE_SUPABASE_ANON_KEY environment variable. Please set it in your .env.local file.");
   }
 
-  // For client-side usage
   return createBrowserClient(supabaseUrl, supabaseAnonKey);
 };

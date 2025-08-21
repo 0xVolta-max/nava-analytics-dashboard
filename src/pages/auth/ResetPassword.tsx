@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createClient } from '@/lib/supabaseClient';
@@ -54,7 +52,7 @@ const ResetPasswordPage = () => {
       if (error) throw error;
       showSuccess('Das Passwort wurde erfolgreich zurückgesetzt!');
       await supabase.auth.signOut(); // Melden Sie den Benutzer nach der Aktualisierung ab
-      navigate('/auth/login');
+      navigate('/login');
     } catch (error: any) {
       showError(error.message || 'Das Passwort konnte nicht zurückgesetzt werden.');
     } finally {

@@ -1,5 +1,3 @@
-"use client";
-
 import {
   Avatar,
   AvatarFallback,
@@ -33,7 +31,7 @@ export function UserNav() {
       showError(error.message);
     } else {
       showSuccess("Logged out successfully");
-      navigate('/auth/login');
+      navigate('/login');
     }
   };
 

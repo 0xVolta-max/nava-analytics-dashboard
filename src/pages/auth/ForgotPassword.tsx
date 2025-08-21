@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { createClient } from '@/lib/supabaseClient';
@@ -22,7 +20,7 @@ const ForgotPasswordPage = () => {
     setIsLoading(true);
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/auth/reset-password`,
+        redirectTo: `${window.location.origin}/reset-password`,
       });
       if (error) throw error;
       showSuccess('Password reset link sent!');
@@ -51,7 +49,7 @@ const ForgotPasswordPage = () => {
             <div className="text-center">
               <p className="text-sm mb-4">Please check your inbox (and spam folder).</p>
               <Button asChild variant="outline" className="w-full bg-transparent hover:bg-white/10">
-                <Link to="/auth/login">Back to Login</Link>
+                <Link to="/login">Back to Login</Link>
               </Button>
             </div>
           ) : (
@@ -73,7 +71,7 @@ const ForgotPasswordPage = () => {
               </Button>
               <div className="mt-4 text-center text-sm">
                 Remember your password?{' '}
-                <Link to="/auth/login" className="underline">
+                <Link to="/login" className="underline">
                   Login
                 </Link>
               </div>

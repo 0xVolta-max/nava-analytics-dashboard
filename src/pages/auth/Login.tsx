@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { createClient } from '@/lib/supabaseClient';
@@ -9,7 +7,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { showError, showSuccess } from '@/utils/toast';
 import SafyLogo from '@/assets/logo.svg?react';
-import TurnstileWidget from '@/components/auth/TurnstileWidget';
 
 const supabase = createClient();
 
@@ -18,31 +15,11 @@ const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
-  // In einer echten Anwendung würde die Anzahl der Fehlversuche serverseitig verwaltet
-  // und dem Client mitgeteilt, wann Turnstile angezeigt werden soll.
-  // Für diese SPA-Implementierung zeigen wir Turnstile immer an.
-  const [showTurnstile, setShowTurnstile] = useState(true); 
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-
-    if (showTurnstile && !turnstileToken) {
-      showError('Bitte bestätigen Sie, dass Sie kein Roboter sind.');
-      setIsLoading(false);
-      return;
-    }
-
     try {
-      // Serverseitige Turnstile-Validierung (Platzhalter)
-      // In einer Next.js-Anwendung würde dies eine API-Route aufrufen,
-      // die den Turnstile-Token validiert und auch die Rate-Limiting-Logik enthält.
-      // Die Rate-Limiting-Logik würde entscheiden, ob Turnstile überhaupt erforderlich ist.
-      // Da dies eine SPA ist, wird die serverseitige Validierung hier nicht direkt aufgerufen.
-      // Sie müssten einen separaten Backend-Dienst dafür einrichten.
-      // Für diese Demo gehen wir davon aus, dass der Turnstile-Token clientseitig generiert wird.
-
       const { error } = await supabase.auth.signInWithPassword({
         email: email,
         password: password,
@@ -91,7 +68,7 @@ const LoginPage = () => {
               <div className="flex items-center">
                 <Label htmlFor="password">Password</Label>
                 <Link
-                  to="/auth/forgot-password"
+                  to="/forgot-password"
                   className="ml-auto inline-block text-sm underline"
                 >
                   Forgot your password?
@@ -106,24 +83,13 @@ const LoginPage = () => {
                 className="bg-white/5 border-white/20 focus:ring-primary"
               />
             </div>
-            {showTurnstile && (
-              <TurnstileWidget
-                siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY as string}
-                onVerify={setTurnstileToken}
-                onError={(code) => showError(`Turnstile-Fehler: ${code}`)}
-                onExpire={() => {
-                  setTurnstileToken(null);
-                  showError('Turnstile-Token abgelaufen. Bitte versuchen Sie es erneut.');
-                }}
-              />
-            )}
-            <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={isLoading || (showTurnstile && !turnstileToken)}>
+            <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={isLoading}>
               {isLoading ? 'Logging in...' : 'Login'}
             </Button>
           </form>
           <div className="mt-4 text-center text-sm">
             Don&apos;t have an account?{' '}
-            <Link to="/auth/signup" className="underline">
+            <Link to="/signup" className="underline">
               Sign up
             </Link>
           </div>

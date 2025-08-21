@@ -1,19 +1,9 @@
-"use client";
-
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Skeleton } from '@/components/ui/skeleton';
 
-const PublicRoute = ({ children }: { children: React.ReactNode }) => {
+const PublicRoute = () => {
   const { user, isLoading } = useAuth();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!isLoading && user) {
-      navigate('/', { replace: true });
-    }
-  }, [user, isLoading, navigate]);
 
   if (isLoading) {
     return (
@@ -24,10 +14,10 @@ const PublicRoute = ({ children }: { children: React.ReactNode }) => {
   }
 
   if (user) {
-    return null; // Redirect handled by useEffect
+    return <Navigate to="/" replace />;
   }
 
-  return <>{children}</>;
+  return <Outlet />;
 };
 
 export default PublicRoute;
