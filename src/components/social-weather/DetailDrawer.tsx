@@ -1,5 +1,4 @@
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
-import { Progress } from "@/components/ui/progress";
 import { formatEngagement, formatNumber } from "@/lib/social-weather/format";
 import { getMomentum, getWeatherIcon } from "@/lib/social-weather/mapping";
 import type { SocialWeather, Platform } from "@/lib/social-weather/types";
