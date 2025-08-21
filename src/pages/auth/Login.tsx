@@ -26,7 +26,6 @@ const LoginPage = () => {
   const isTurnstileRequired = failedAttempts >= LOGIN_ATTEMPT_LIMIT;
 
   useEffect(() => {
-    const typedWindow = window as TurnstileWindow; // Explicitly cast window
     if (isTurnstileRequired && turnstileContainerRef.current && !turnstileWidgetId) {
       const id = renderTurnstile(
         turnstileContainerRef.current.id,
@@ -37,9 +36,9 @@ const LoginPage = () => {
       setTurnstileWidgetId(id);
     } else if (!isTurnstileRequired && turnstileWidgetId) {
       // If Turnstile is no longer required, remove the widget
-      if (typedWindow.turnstile) {
-        typedWindow.turnstile.reset(turnstileWidgetId);
-        typedWindow.turnstile.remove(turnstileWidgetId);
+      if (window.turnstile) {
+        window.turnstile.reset(turnstileWidgetId);
+        window.turnstile.remove(turnstileWidgetId);
       }
       setTurnstileWidgetId(undefined);
     }
@@ -85,9 +84,8 @@ const LoginPage = () => {
       navigate('/');
     } catch (error: any) {
       showError(error.message || 'An unknown error occurred.');
-      const typedWindow = window as TurnstileWindow; // Explicitly cast window
-      if (isTurnstileRequired && turnstileWidgetId && typedWindow.turnstile) {
-        typedWindow.turnstile.reset(turnstileWidgetId); // Reset Turnstile on error
+      if (isTurnstileRequired && turnstileWidgetId && window.turnstile) {
+        window.turnstile.reset(turnstileWidgetId); // Reset Turnstile on error
       }
     } finally {
       setIsLoading(false);
@@ -117,9 +115,8 @@ const LoginPage = () => {
         await attemptLogin();
       } catch (error: any) {
         showError(error.message || 'Ein unbekannter Fehler ist aufgetreten.');
-        const typedWindow = window as TurnstileWindow; // Explicitly cast window
-        if (turnstileWidgetId && typedWindow.turnstile) {
-          typedWindow.turnstile.reset(turnstileWidgetId); // Reset Turnstile on error
+        if (turnstileWidgetId && window.turnstile) {
+          window.turnstile.reset(turnstileWidgetId); // Reset Turnstile on error
         }
       } finally {
         setIsLoading(false);

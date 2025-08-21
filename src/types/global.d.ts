@@ -1,10 +1,12 @@
-interface TurnstileWindow extends Window {
-  turnstile?: {
-    render: (element: string | HTMLElement, options: TurnstileOptions) => string;
-    reset: (widgetId: string) => void;
-    execute: (widgetId: string) => void;
-    remove: (widgetId: string) => void; // Added remove method
-  };
+declare global {
+  interface Window {
+    turnstile?: {
+      render: (element: string | HTMLElement, options: TurnstileOptions) => string;
+      reset: (widgetId: string) => void;
+      execute: (widgetId: string) => void;
+      remove: (widgetId: string) => void;
+    };
+  }
 }
 
 interface TurnstileOptions {
@@ -26,4 +28,4 @@ interface TurnstileOptions {
   binding?: string;
 }
 
-declare const window: TurnstileWindow;
+export {}; // This line is important to make it a module and not global script

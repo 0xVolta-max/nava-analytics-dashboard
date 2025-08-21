@@ -63,9 +63,8 @@ const SignUpPage = () => {
         navigate('/login');
       } catch (error: any) {
         showError(error.message || 'Ein unbekannter Fehler ist aufgetreten.');
-        const typedWindow = window as TurnstileWindow; // Explicitly cast window
-        if (turnstileWidgetId && typedWindow.turnstile) {
-          typedWindow.turnstile.reset(turnstileWidgetId); // Reset Turnstile on error
+        if (turnstileWidgetId && window.turnstile) {
+          window.turnstile.reset(turnstileWidgetId); // Reset Turnstile on error
         }
       } finally {
         setIsLoading(false);
