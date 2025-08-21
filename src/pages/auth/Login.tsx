@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { showError, showSuccess } from '@/utils/toast';
 import SafyLogo from '@/assets/logo.svg?react';
+import TurnstileWidget from '@/components/auth/TurnstileWidget';
 
 const supabase = createClient();
 
@@ -15,11 +16,45 @@ const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  // In einer echten Anwendung würde die Anzahl der Fehlversuche serverseitig verwaltet
+  // und dem Client mitgeteilt, wann Turnstile angezeigt werden soll.
+  // Für diese SPA-Implementierung zeigen wir Turnstile immer an.
+  const [showTurnstile, setShowTurnstile] = useState(true); 
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+
+    if (showTurnstile && !turnstileToken) {
+      showError('Bitte bestätigen Sie, dass Sie kein Roboter sind.');
+      setIsLoading(false);
+      return;
+    }
+
     try {
+      // Serverseitige Turnstile-Validierung (Platzhalter)
+      // In einer Next.js-Anwendung würde dies eine API-Route aufrufen,
+      // die den Turnstile-Token validiert und auch die Rate-Limiting-Logik enthält.
+      // Die Rate-Limiting-Logik würde entscheiden, ob Turnstile überhaupt erforderlich ist.
+      const turnstileVerificationResponse = await fetch('/api/verify-turnstile', { // Dies ist ein Platzhalter-URL
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ token: turnstileToken, email: email }), // Senden Sie die E-Mail für Rate-Limiting
+      });
+
+      const verificationResult = await turnstileVerificationResponse.json();
+
+      if (!turnstileVerificationResponse.ok || !verificationResult.success) {
+        showError(verificationResult.message || 'Turnstile-Verifizierung fehlgeschlagen. Bitte versuchen Sie es erneut.');
+        setIsLoading(false);
+        setTurnstileToken(null); // Token zurücksetzen
+        // Hier könnte man auch die showTurnstile-State aktualisieren, wenn der Server dies mitteilt
+        return;
+      }
+
       const { error } = await supabase.auth.signInWithPassword({
         email: email,
         password: password,
@@ -30,6 +65,8 @@ const LoginPage = () => {
           showError('Bitte bestätigen Sie Ihre E-Mail-Adresse, bevor Sie sich anmelden.');
           return;
         }
+        // Bei fehlgeschlagenem Login würde der Server die Fehlversuche zählen
+        // und ggf. den Client anweisen, Turnstile anzuzeigen (falls noch nicht geschehen).
         throw error;
       }
 
@@ -83,7 +120,18 @@ const LoginPage = () => {
                 className="bg-white/5 border-white/20 focus:ring-primary"
               />
             </div>
-            <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={isLoading}>
+            {showTurnstile && (
+              <TurnstileWidget
+                siteKey={import.meta.env.VITE_NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+                onVerify={setTurnstileToken}
+                onError={(code) => showError(`Turnstile-Fehler: ${code}`)}
+                onExpire={() => {
+                  setTurnstileToken(null);
+                  showError('Turnstile-Token abgelaufen. Bitte versuchen Sie es erneut.');
+                }}
+              />
+            )}
+            <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={isLoading || (showTurnstile && !turnstileToken)}>
               {isLoading ? 'Logging in...' : 'Login'}
             </Button>
           </form>
