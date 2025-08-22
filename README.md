@@ -1,8 +1,8 @@
 # NAVA Analytics Dashboard
 
-Willkommen zu Ihrem NAVA Analytics Dashboard, einer leistungsstarken und visuell ansprechenden Oberfläche zur Verfolgung wichtiger Metriken im Zusammenhang mit der Inhaltserstellung. Dieses Dashboard wurde mit React, TypeScript und Tailwind CSS erstellt und bietet interaktive Diagramme und ein responsives Design.
+Welcome to your NAVA Analytics Dashboard, a powerful and visually appealing interface for tracking key metrics related to content creation. Built with React, TypeScript, and Tailwind CSS, this dashboard offers interactive charts and a responsive design.
 
-## Meilensteine & Todos
+## Milestones & Todos
 
 ### Milestone 1: Initial UI & Responsiveness (Complete)
 - [x] Set up the basic dashboard layout.
@@ -44,13 +44,13 @@ This project is configured for easy deployment on [Vercel](https://vercel.com/).
 
 To deploy, connect your Git repository to a Vercel project. Every push to the main branch will automatically trigger a new deployment.
 
-**Wichtige Hinweise zur Altcha-Integration:**
+**Important Notes on Altcha Integration:**
 
-*   **Umgebungsvariablen:** Für die Altcha-Integration musst du die folgenden Umgebungsvariablen in deinem Vercel-Projekt (Project Settings > Environment Variables) setzen:
-    *   `VITE_ALTCHA_CHALLENGE_API_URL`: Setze diesen auf `/api/altcha-challenge`.
-    *   `VITE_ALTCHA_VERIFY_API_URL`: Setze diesen auf `/api/verify-altcha`.
-    *   `ALTCHA_SECRET_KEY`: Dies ist ein geheimer Schlüssel, der für die Generierung und Verifizierung von Altcha-Challenges verwendet wird. Er sollte ein langer, zufälliger String sein und nur serverseitig verwendet werden.
-*   **Lokale Entwicklung:** Die `api/altcha-challenge.ts` und `api/verify-altcha.ts`-Dateien sind [Vercel Serverless Functions](https://vercel.com/docs/functions/serverless-functions). Sie werden **nicht** vom lokalen Vite-Entwicklungsserver ausgeführt. Daher wird die Altcha-Verifizierung nur funktionieren, wenn die Anwendung auf Vercel bereitgestellt wird. Bei lokaler Ausführung kann es zu `404 Not Found`-Fehlern für diese Endpunkte kommen.
+*   **Environment Variables:** For Altcha integration, you need to set the following environment variables in your Vercel project (Project Settings > Environment Variables):
+    *   `VITE_ALTCHA_CHALLENGE_API_URL`: Set this to `/api/altcha-challenge`.
+    *   `VITE_ALTCHA_VERIFY_API_URL`: Set this to `/api/verify-altcha`.
+    *   `ALTCHA_SECRET_KEY`: This is a secret key used for generating and verifying Altcha challenges. It should be a long, random string and used only server-side.
+*   **Local Development:** The `api/altcha-challenge.ts` and `api/verify-altcha.ts` files are [Vercel Serverless Functions](https://vercel.com/docs/functions/serverless-functions). They are **not** executed by the local Vite development server. Therefore, Altcha verification will only work when the application is deployed on Vercel. When running locally, you might encounter `404 Not Found` errors for these endpoints.
 
 ## Database & SQL
 

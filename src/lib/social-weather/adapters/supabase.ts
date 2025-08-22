@@ -2,34 +2,34 @@ import { supabase } from "@/lib/supabaseClient";
 import type { SocialWeather } from '../types';
 
 /**
- * Ruft Social-Weather-Daten von einer Supabase RPC-Funktion ab.
+ * Fetches Social Weather data from a Supabase RPC function.
  * 
- * Diese Funktion geht davon aus, dass Sie eine Funktion in Ihrer Supabase-Datenbank
- * mit dem Namen `nava_get_social_weather` haben, die ein JSON-Objekt zurückgibt,
- * das mit dem `SocialWeather`-Typ übereinstimmt.
+ * This function assumes you have a function in your Supabase database
+ * named `nava_get_social_weather` that returns a JSON object
+ * matching the `SocialWeather` type.
  */
 export const getSocialWeatherFromSupabase = async (): Promise<SocialWeather> => {
   // use singleton supabase client
 
-  // Rufen Sie die serverseitige Funktion in Supabase auf
+  // Call the server-side function in Supabase
   const { data, error } = await supabase.rpc('nava_get_social_weather');
 
   if (error) {
-    console.error("Fehler beim Abrufen der Social-Weather-Daten von Supabase:", error);
-    throw new Error("Konnte Social-Weather-Daten nicht laden.");
+    console.error("Error fetching Social Weather data from Supabase:", error);
+    throw new Error("Could not load Social Weather data.");
   }
 
-  // Supabase RPC gibt die Daten direkt zurück.
-  // Wir stellen sicher, dass sie dem erwarteten Typ entsprechen.
+  // Supabase RPC returns the data directly.
+  // We ensure it matches the expected type.
   return data as SocialWeather;
 };
 
 /**
- * Ruft die aggregierte "Overall Engagement Rate" von einer Supabase RPC-Funktion ab.
+ * Fetches the aggregated "Overall Engagement Rate" from a Supabase RPC function.
  * 
- * Diese Funktion geht davon aus, dass Sie eine Funktion in Ihrer Supabase-Datenbank
- * mit dem Namen `nava_calculate_overall_engagement_rate` haben, die eine einzelne
- * Zahl (Prozentsatz) zurückgibt.
+ * This function assumes you have a function in your Supabase database
+ * named `nava_calculate_overall_engagement_rate` that returns a single
+ * number (percentage).
  */
 export const getOverallEngagementRate = async (): Promise<number> => {
   // use singleton supabase client
@@ -37,24 +37,24 @@ export const getOverallEngagementRate = async (): Promise<number> => {
   const { data, error } = await supabase.rpc('nava_calculate_overall_engagement_rate');
 
   if (error) {
-    console.error("Fehler beim Abrufen der Overall Engagement Rate von Supabase:", error);
-    throw new Error("Konnte Overall Engagement Rate nicht laden.");
+    console.error("Error fetching Overall Engagement Rate from Supabase:", error);
+    throw new Error("Could not load Overall Engagement Rate.");
   }
 
   if (typeof data !== 'number') {
-    console.error("Unerwarteter Datentyp von nava_calculate_overall_engagement_rate:", typeof data);
-    throw new Error("Ungültiges Datenformat für Engagement Rate.");
+    console.error("Unexpected data type from nava_calculate_overall_engagement_rate:", typeof data);
+    throw new Error("Invalid data format for Engagement Rate.");
   }
 
   return data;
 };
 
 /**
- * Ruft den Virality Score von einer Supabase RPC-Funktion ab.
+ * Fetches the Virality Score from a Supabase RPC function.
  * 
- * Diese Funktion geht davon aus, dass Sie eine Funktion in Ihrer Supabase-Datenbank
- * mit dem Namen `nava_calculate_virality_metrics` haben, die eine einzelne
- * Zahl (Score von 0.0 bis 10.0) zurückgibt.
+ * This function assumes you have a function in your Supabase database
+ * named `nava_calculate_virality_metrics` that returns a single
+ * number (score from 0.0 to 10.0).
  */
 export const getViralityMetrics = async (): Promise<number> => {
   // use singleton supabase client
@@ -62,24 +62,24 @@ export const getViralityMetrics = async (): Promise<number> => {
   const { data, error } = await supabase.rpc('nava_calculate_virality_metrics');
 
   if (error) {
-    console.error("Fehler beim Abrufen der Virality Metrics von Supabase:", error);
-    throw new Error("Konnte Virality Metrics nicht laden.");
+    console.error("Error fetching Virality Metrics from Supabase:", error);
+    throw new Error("Could not load Virality Metrics.");
   }
 
   if (typeof data !== 'number') {
-    console.error("Unerwarteter Datentyp von nava_calculate_virality_metrics:", typeof data);
-    throw new Error("Ungültiges Datenformat für Virality Score.");
+    console.error("Unexpected data type from nava_calculate_virality_metrics:", typeof data);
+    throw new Error("Invalid data format for Virality Score.");
   }
 
   return data;
 };
 
 /**
- * Ruft den Buzz Score von einer Supabase RPC-Funktion ab.
+ * Fetches the Buzz Score from a Supabase RPC function.
  * 
- * Diese Funktion geht davon aus, dass Sie eine Funktion in Ihrer Supabase-Datenbank
- * mit dem Namen `nava_calculate_buzz_score` haben, die eine einzelne
- * Zahl (Score von 0 bis 100) zurückgibt.
+ * This function assumes you have a function in your Supabase database
+ * named `nava_calculate_buzz_score` that returns a single
+ * number (score from 0 to 100).
  */
 export const getBuzzScore = async (): Promise<number> => {
   // use singleton supabase client
@@ -87,13 +87,13 @@ export const getBuzzScore = async (): Promise<number> => {
   const { data, error } = await supabase.rpc('nava_calculate_buzz_score');
 
   if (error) {
-    console.error("Fehler beim Abrufen des Buzz Score von Supabase:", error);
-    throw new Error("Konnte Buzz Score nicht laden.");
+    console.error("Error fetching Buzz Score from Supabase:", error);
+    throw new Error("Could not load Buzz Score.");
   }
 
   if (typeof data !== 'number') {
-    console.error("Unerwarteter Datentyp von nava_calculate_buzz_score:", typeof data);
-    throw new Error("Ungültiges Datenformat für Buzz Score.");
+    console.error("Unexpected data type from nava_calculate_buzz_score:", typeof data);
+    throw new Error("Invalid data format for Buzz Score.");
   }
 
   return data;

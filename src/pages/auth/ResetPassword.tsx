@@ -19,14 +19,14 @@ const ResetPasswordPage = () => {
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    // Warten Sie, bis der Auth-Kontext die Sitzung aus dem URL-Fragment verarbeitet hat
+    // Wait for the auth context to process the session from the URL fragment
     const timer = setTimeout(() => {
       if (session) {
         setIsReady(true);
       }
-    }, 500); // Eine kleine Verzögerung, um sicherzustellen, dass die Sitzung festgelegt ist
+    }, 500); // A small delay to ensure the session is set
 
-    // Überprüfen Sie auch, ob die Sitzung bereits vorhanden ist
+    // Also check if the session is already present
     if (session) {
         setIsReady(true);
         clearTimeout(timer);
@@ -38,22 +38,22 @@ const ResetPasswordPage = () => {
   const handlePasswordReset = async (e: React.FormEvent) => {
     e.preventDefault();
     if (password.length < 8) {
-      showError("Das Passwort muss mindestens 8 Zeichen lang sein.");
+      showError("Password must be at least 8 characters long.");
       return;
     }
     if (password !== confirmPassword) {
-      showError("Die Passwörter stimmen nicht überein.");
+      showError("Passwords do not match.");
       return;
     }
     setIsLoading(true);
     try {
       const { error } = await supabase.auth.updateUser({ password: password });
       if (error) throw error;
-      showSuccess('Das Passwort wurde erfolgreich zurückgesetzt!');
-      await supabase.auth.signOut(); // Melden Sie den Benutzer nach der Aktualisierung ab
+      showSuccess('Password has been reset successfully!');
+      await supabase.auth.signOut(); // Log the user out after update
       navigate('/login');
     } catch (error: any) {
-      showError(error.message || 'Das Passwort konnte nicht zurückgesetzt werden.');
+      showError(error.message || 'Failed to reset password.');
     } finally {
       setIsLoading(false);
     }
@@ -64,8 +64,8 @@ const ResetPasswordPage = () => {
       <div className="min-h-screen flex items-center justify-center p-4">
         <Card className="mx-auto max-w-sm w-full bg-white/10 backdrop-blur-xl border border-white/15 text-white">
           <CardHeader>
-            <CardTitle>Wird überprüft...</CardTitle>
-            <CardDescription>Überprüfung Ihrer Anfrage zum Zurücksetzen des Passworts.</CardDescription>
+            <CardTitle>Verifying...</CardTitle>
+            <CardDescription>Verifying your password reset request.</CardDescription>
           </CardHeader>
         </Card>
       </div>
@@ -77,13 +77,13 @@ const ResetPasswordPage = () => {
       <Card className="mx-auto max-w-sm w-full bg-white/10 backdrop-blur-xl border border-white/15 text-white">
         <CardHeader className="text-center">
           <SafyLogo className="max-w-[150px] h-auto mx-auto mb-4" />
-          <CardTitle className="text-2xl">Passwort zurücksetzen</CardTitle>
-          <CardDescription>Geben Sie unten Ihr neues Passwort ein.</CardDescription>
+          <CardTitle className="text-2xl">Reset Password</CardTitle>
+          <CardDescription>Enter your new password below.</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handlePasswordReset} className="grid gap-4">
             <div className="grid gap-2">
-              <Label htmlFor="password">Neues Passwort</Label>
+              <Label htmlFor="password">New Password</Label>
               <Input
                 id="password"
                 type="password"
@@ -94,7 +94,7 @@ const ResetPasswordPage = () => {
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="confirm-password">Neues Passwort bestätigen</Label>
+              <Label htmlFor="confirm-password">Confirm New Password</Label>
               <Input
                 id="confirm-password"
                 type="password"
@@ -105,7 +105,7 @@ const ResetPasswordPage = () => {
               />
             </div>
             <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={isLoading}>
-              {isLoading ? 'Wird zurückgesetzt...' : 'Passwort zurücksetzen'}
+              {isLoading ? 'Resetting password...' : 'Reset Password'}
             </Button>
           </form>
         </CardContent>
