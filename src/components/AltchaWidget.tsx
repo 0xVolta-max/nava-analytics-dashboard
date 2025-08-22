@@ -1,5 +1,5 @@
 import React from 'react';
-import { Altcha } from '@altcha/react';
+import * as Altcha from 'altcha';
 
 interface AltchaWidgetProps {
   onVerified: (challenge: string) => void;
@@ -12,14 +12,22 @@ const AltchaWidget: React.FC<AltchaWidgetProps> = ({ onVerified, onError, auto =
 
   return (
     <div className="altcha-container mt-2 flex justify-center">
-      <Altcha
-        challengeurl={challengeUrl}
-        onVerified={onVerified}
-        onError={(e) => onError(e.message || 'Altcha verification failed.')}
-        auto={auto}
-        // You can customize the widget appearance here if needed
-        // theme="dark"
-        // debug={true}
+      <div
+        ref={el => {
+          if (el) {
+            // Clean up previous widget if any
+            el.innerHTML = '';
+            // @ts-ignore
+            const widget = new (Altcha as any).default(el, {
+              challengeUrl,
+              auto,
+              onVerified,
+              onError: (e: any) => onError(e?.message || 'Altcha verification failed.'),
+            });
+            // Optionally store widget instance for further control
+          }
+        }}
+        className="altcha-widget"
       />
     </div>
   );

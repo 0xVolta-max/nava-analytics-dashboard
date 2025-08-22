@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { createClient } from '@/lib/supabaseClient';
+import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -9,9 +9,9 @@ import { showError, showSuccess } from '@/utils/toast';
 import SafyLogo from '@/assets/logo.svg?react';
 import AltchaWidget from '@/components/AltchaWidget'; // Import AltchaWidget
 
-const supabase = createClient();
 
 const LoginPage = () => {
+  const { signIn, user } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -28,21 +28,18 @@ const LoginPage = () => {
 
   const attemptLogin = async () => {
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email: email,
-        password: password,
-      });
+      const { error } = await signIn(email, password);
 
       if (error) {
         if (error.message.includes('Email not confirmed')) {
-          showError('Bitte bestätigen Sie Ihre E-Mail-Adresse, bevor Sie sich anmelden.');
+          showError('Please confirm your email address before logging in.');
           return;
         }
         throw error;
       }
 
       showSuccess('Logged in successfully!');
-      navigate('/');
+      // The navigation will be handled by the useEffect watching the user state
     } catch (error: any) {
       showError(error.message || 'An unknown error occurred.');
     } finally {
@@ -59,6 +56,7 @@ const LoginPage = () => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'X-CSRF-Token': document.cookie.match(/csrf-token=([^;]+)/)?.[1] || '',
           },
           body: JSON.stringify({ challenge: altchaResponse }),
         });
@@ -72,7 +70,7 @@ const LoginPage = () => {
         // Proceed with Supabase login after Altcha verification
         await attemptLogin();
       } catch (error: any) {
-        showError(error.message || 'Ein unbekannter Fehler ist aufgetreten.');
+        showError(error.message || 'An unknown error occurred.');
       } finally {
         setIsLoading(false);
         setShowAltcha(false); // Hide Altcha after attempt
@@ -83,6 +81,12 @@ const LoginPage = () => {
       verifyAltchaAndLogin();
     }
   }, [altchaResponse]);
+
+  useEffect(() => {
+    if (user) {
+      navigate('/');
+    }
+  }, [user, navigate]);
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">

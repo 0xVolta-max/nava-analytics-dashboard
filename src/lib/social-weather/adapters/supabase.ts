@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabaseClient";
+import { supabase } from "@/lib/supabaseClient";
 import type { SocialWeather } from '../types';
 
 /**
@@ -9,7 +9,7 @@ import type { SocialWeather } from '../types';
  * das mit dem `SocialWeather`-Typ übereinstimmt.
  */
 export const getSocialWeatherFromSupabase = async (): Promise<SocialWeather> => {
-  const supabase = createClient();
+  // use singleton supabase client
 
   // Rufen Sie die serverseitige Funktion in Supabase auf
   const { data, error } = await supabase.rpc('nava_get_social_weather');
@@ -32,7 +32,7 @@ export const getSocialWeatherFromSupabase = async (): Promise<SocialWeather> => 
  * Zahl (Prozentsatz) zurückgibt.
  */
 export const getOverallEngagementRate = async (): Promise<number> => {
-  const supabase = createClient();
+  // use singleton supabase client
 
   const { data, error } = await supabase.rpc('nava_calculate_overall_engagement_rate');
 
@@ -57,7 +57,7 @@ export const getOverallEngagementRate = async (): Promise<number> => {
  * Zahl (Score von 0.0 bis 10.0) zurückgibt.
  */
 export const getViralityMetrics = async (): Promise<number> => {
-  const supabase = createClient();
+  // use singleton supabase client
 
   const { data, error } = await supabase.rpc('nava_calculate_virality_metrics');
 
@@ -82,7 +82,7 @@ export const getViralityMetrics = async (): Promise<number> => {
  * Zahl (Score von 0 bis 100) zurückgibt.
  */
 export const getBuzzScore = async (): Promise<number> => {
-  const supabase = createClient();
+  // use singleton supabase client
 
   const { data, error } = await supabase.rpc('nava_calculate_buzz_score');
 

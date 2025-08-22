@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { createClient } from '@/lib/supabaseClient';
+import { supabase } from '@/lib/supabaseClient';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -8,7 +8,6 @@ import { Label } from '@/components/ui/label';
 import { showError, showSuccess } from '@/utils/toast';
 import SafyLogo from '@/assets/logo.svg?react';
 
-const supabase = createClient();
 
 const ForgotPasswordPage = () => {
   const [email, setEmail] = useState('');

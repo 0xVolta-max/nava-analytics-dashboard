@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { createClient } from '@/lib/supabaseClient';
+import { supabase } from '@/lib/supabaseClient';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -9,7 +9,6 @@ import { showError, showSuccess } from '@/utils/toast';
 import SafyLogo from '@/assets/logo.svg?react';
 import AltchaWidget from '@/components/AltchaWidget'; // Import AltchaWidget
 
-const supabase = createClient();
 
 const SignUpPage = () => {
   const navigate = useNavigate();
@@ -23,7 +22,7 @@ const SignUpPage = () => {
     e.preventDefault();
     
     if (password.length < 8) {
-      showError('Das Passwort muss mindestens 8 Zeichen lang sein.');
+      showError('Password must be at least 8 characters long.');
       return;
     }
 
@@ -41,6 +40,7 @@ const SignUpPage = () => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'X-CSRF-Token': document.cookie.match(/csrf-token=([^;]+)/)?.[1] || '',
           },
           body: JSON.stringify({ challenge: altchaResponse }),
         });
@@ -59,10 +59,10 @@ const SignUpPage = () => {
 
         if (error) throw error;
 
-        showSuccess('Konto erstellt! Bitte überprüfen Sie Ihre E-Mails zur Bestätigung.');
+        showSuccess('Account created! Please check your email for confirmation.');
         navigate('/login');
       } catch (error: any) {
-        showError(error.message || 'Ein unbekannter Fehler ist aufgetreten.');
+        showError(error.message || 'An unknown error occurred.');
       } finally {
         setIsLoading(false);
         setShowAltcha(false); // Hide Altcha after attempt
@@ -80,7 +80,7 @@ const SignUpPage = () => {
         <CardHeader className="text-center">
           <SafyLogo className="max-w-[150px] h-auto mx-auto mb-4" />
           <CardTitle className="text-2xl">Sign Up</CardTitle>
-          <CardDescription>Geben Sie Ihre Informationen ein, um ein Konto zu erstellen</CardDescription>
+          <CardDescription>Enter your information to create an account</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSignUp} className="grid gap-4">
@@ -119,11 +119,11 @@ const SignUpPage = () => {
               />
             )}
             <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={isLoading}>
-              {isLoading ? 'Konto wird erstellt...' : 'Konto erstellen'}
+              {isLoading ? 'Creating account...' : 'Create account'}
             </Button>
           </form>
           <div className="mt-4 text-center text-sm">
-            Haben Sie bereits ein Konto?{' '}
+            Already have an account?{' '}
             <Link to="/login" className="underline">
               Login
             </Link>

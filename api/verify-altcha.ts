@@ -6,6 +6,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({ success: false, error: 'Method Not Allowed' });
   }
 
+  const csrfTokenFromCookie = req.cookies['csrf-token'];
+  const csrfTokenFromHeader = req.headers['x-csrf-token'];
+
+  if (!csrfTokenFromCookie || !csrfTokenFromHeader || csrfTokenFromCookie !== csrfTokenFromHeader) {
+    return res.status(403).json({ success: false, error: 'Invalid CSRF token' });
+  }
+
   const { challenge } = req.body;
 
   if (!challenge) {

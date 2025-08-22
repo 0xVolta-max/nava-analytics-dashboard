@@ -15,11 +15,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useAuth } from "@/contexts/AuthContext"
-import { createClient } from "@/lib/supabaseClient"
+import { supabase } from "@/lib/supabaseClient"
 import { useNavigate } from "react-router-dom"
 import { showError, showSuccess } from "@/utils/toast"
 
-const supabase = createClient();
 
 export function UserNav() {
   const { user } = useAuth();
