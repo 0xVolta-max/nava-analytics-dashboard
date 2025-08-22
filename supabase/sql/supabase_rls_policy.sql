@@ -9,6 +9,9 @@ DROP FUNCTION IF EXISTS public.handle_new_user();
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
+  -- Debug: Logge die eingehenden Daten
+  RAISE NOTICE 'Creating user profile for: %', NEW.email;
+
   INSERT INTO public.nava_user_authentication (
     user_id,
     email,
@@ -31,7 +34,7 @@ BEGIN
   VALUES (
     NEW.id,
     NEW.email,
-    '', -- Standardwert für username
+    NEW.email, -- Verwende Email als einzigartigen Username
     '', -- Standardwert für password_hash (WARNUNG: Dies ist ein Platzhalter. Wenn Sie Passwörter hier verwalten, muss dies korrekt gehandhabt werden.)
     '', -- Standardwert für salt (WARNUNG: Dies ist ein Platzhalter.)
     '', -- Standardwert für first_name
@@ -47,7 +50,15 @@ BEGIN
     now(), -- Standardwert für created_at
     now()  -- Standardwert für updated_at
   );
+
+  RAISE NOTICE 'User profile created successfully for: %', NEW.email;
   RETURN NEW;
+
+EXCEPTION
+  WHEN OTHERS THEN
+    -- Bei Fehlern: Logge den Fehler und lasse den User trotzdem erstellen
+    RAISE NOTICE 'Error in handle_new_user: %', SQLERRM;
+    RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 

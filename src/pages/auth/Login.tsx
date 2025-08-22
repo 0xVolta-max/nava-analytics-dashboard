@@ -7,8 +7,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { showError, showSuccess } from '@/utils/toast';
 import SafyLogo from '@/assets/logo.svg?react';
-import AltchaWidget from '@/components/AltchaWidget'; // Import AltchaWidget
-
 
 const LoginPage = () => {
   const { signIn, user } = useAuth();
@@ -16,17 +14,11 @@ const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [altchaResponse, setAltchaResponse] = useState<string | null>(null); // State for Altcha response
-  const [showAltcha, setShowAltcha] = useState(false); // Control Altcha visibility
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setAltchaResponse(null); // Reset Altcha response on new attempt
-    setShowAltcha(true); // Show Altcha widget to get a new challenge
-  };
 
-  const attemptLogin = async () => {
     try {
       const { error } = await signIn(email, password);
 
@@ -46,41 +38,6 @@ const LoginPage = () => {
       setIsLoading(false);
     }
   };
-
-  useEffect(() => {
-    const verifyAltchaAndLogin = async () => {
-      if (!altchaResponse) return; // Wait for Altcha response to be set
-
-      try {
-        const response = await fetch(import.meta.env.VITE_ALTCHA_VERIFY_API_URL || '/api/verify-altcha', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-Token': document.cookie.match(/csrf-token=([^;]+)/)?.[1] || '',
-          },
-          body: JSON.stringify({ challenge: altchaResponse }),
-        });
-
-        const data = await response.json();
-
-        if (!response.ok || !data.success) {
-          throw new Error(data.error || 'Altcha verification failed.');
-        }
-
-        // Proceed with Supabase login after Altcha verification
-        await attemptLogin();
-      } catch (error: any) {
-        showError(error.message || 'An unknown error occurred.');
-      } finally {
-        setIsLoading(false);
-        setShowAltcha(false); // Hide Altcha after attempt
-      }
-    };
-
-    if (altchaResponse) {
-      verifyAltchaAndLogin();
-    }
-  }, [altchaResponse]);
 
   useEffect(() => {
     if (user) {
@@ -129,17 +86,6 @@ const LoginPage = () => {
                 className="bg-white/5 border-white/20 focus:ring-primary"
               />
             </div>
-            {showAltcha && (
-              <AltchaWidget
-                onVerified={setAltchaResponse}
-                onError={(msg) => {
-                  showError(msg);
-                  setIsLoading(false);
-                  setShowAltcha(false);
-                }}
-                auto={false} // Set to false to manually trigger verification on form submit
-              />
-            )}
             <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={isLoading}>
               {isLoading ? 'Logging in...' : 'Login'}
             </Button>

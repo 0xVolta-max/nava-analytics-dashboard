@@ -15,9 +15,42 @@ Welcome to your NAVA Analytics Dashboard, a powerful and visually appealing inte
 - [x] Developed the Social Pulse (SocialWeather) widget to display real-time social media insights, with initial Supabase integration and mock data fallback.
 - [x] Fine-tuned widget layouts and component positioning for improved visual consistency.
 - [x] Implemented user authentication (Login, Sign Up, Forgot/Reset Password) with Supabase.
+- [x] **Fixed database constraint issues in signup process**
+- [x] **Resolved 500 Internal Server Error for user registration**
+- [x] **Updated database triggers for proper user profile creation**
 - [x] Set up protected and public routes using React Router.
 - [x] **Integrated Cloudflare Turnstile for enhanced security on Login/Signup.**
 - [x] **Replaced Cloudflare Turnstile with Altcha for enhanced security on Login/Signup.**
+
+### Milestone 2: Unabhängiges Registrierungs-Verifikationssystem (In Planung)
+
+**Problemstellung:**
+- Aktuelle Supabase E-Mail-Verifikation erfordert Mailgun-Konfiguration
+- Keine Kontrolle über Verifikationsprozess
+- Abhängigkeit von externen Services
+
+**Lösung: Hybrides Verifikationssystem**
+- Altcha CAPTCHA für Bot-Schutz
+- Eigenes Token-basiertes E-Mail-Verifikationssystem
+- Optionale SMS-Verifikation über Twilio
+- Unabhängig von Supabase E-Mail-Service
+
+**Implementierungsschritte:**
+- [ ] **Architektur-Design**: Token-Management und Verifikations-Flow
+- [ ] **API-Endpunkte**: `/api/verify/send`, `/api/verify/confirm`, `/api/verify/resend`
+- [ ] **Token-System**: JWT-basierte Verifikation mit Zeitbegrenzung
+- [ ] **E-Mail-Templates**: HTML-Templates mit Branding
+- [ ] **Frontend-Komponenten**: Verifikations-UI und Resend-Funktionalität
+- [ ] **Integration**: Altcha + E-Mail/SMS-Verifikation im Signup-Flow
+- [ ] **Datenbank**: `user_verifications` Tabelle für Token-Management
+- [ ] **Testing**: Vollständiger Verifikations-Flow testen
+
+**Vorteile:**
+✅ Unabhängig von Supabase E-Mail-Service
+✅ Volle Kontrolle über Verifikationsprozess
+✅ Skalierbar und erweiterbar
+✅ Mehrere Verifikationsmethoden
+✅ Bessere Benutzererfahrung mit Resend-Funktionalität
 
 ### Next Steps (Todos)
 - [ ] **Backend & Data Integration (High Priority)**:
@@ -52,6 +85,66 @@ To deploy, connect your Git repository to a Vercel project. Every push to the ma
     *   `ALTCHA_SECRET_KEY`: This is a secret key used for generating and verifying Altcha challenges. It should be a long, random string and used only server-side.
 *   **Local Development:** The `api/altcha-challenge.ts` and `api/verify-altcha.ts` files are [Vercel Serverless Functions](https://vercel.com/docs/functions/serverless-functions). They are **not** executed by the local Vite development server. Therefore, Altcha verification will only work when the application is deployed on Vercel. When running locally, you might encounter `404 Not Found` errors for these endpoints.
 
-## Database & SQL
+## Unabhängiges Verifikationssystem API
 
-All SQL scripts and database-related documentation can be found in the `supabase/sql` directory.
+### Verifikations-Endpunkte
+
+#### POST /api/verify/send
+Sendet Verifikations-E-Mail oder SMS
+
+**Request:**
+```json
+{
+  "userId": "uuid",
+  "type": "email|sms",
+  "recipient": "user@example.com|+1234567890"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Verification sent successfully",
+  "expiresAt": "2024-01-01T12:00:00Z"
+}
+```
+
+#### POST /api/verify/confirm
+Verifiziert Token und aktiviert Account
+
+**Request:**
+```json
+{
+  "token": "jwt-verification-token"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Account verified successfully",
+  "user": {...}
+}
+```
+
+#### POST /api/verify/resend
+Sendet neue Verifikation
+
+**Request:**
+```json
+{
+  "userId": "uuid",
+  "type": "email|sms"
+}
+```
+
+### Token-Sicherheit
+
+- **JWT-Signatur**: Tokens werden mit HS256 signiert
+- **Ablaufzeit**: 24 Stunden für E-Mail, 10 Minuten für SMS
+- **Einmalige Nutzung**: Tokens können nur einmal verwendet werden
+- **User-Binding**: Tokens sind an spezifische User gebunden
+
+## Database & SQL

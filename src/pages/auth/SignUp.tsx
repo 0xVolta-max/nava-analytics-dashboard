@@ -1,78 +1,60 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { supabase } from '@/lib/supabaseClient';
+import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { showError, showSuccess } from '@/utils/toast';
 import SafyLogo from '@/assets/logo.svg?react';
-import AltchaWidget from '@/components/AltchaWidget'; // Import AltchaWidget
-
 
 const SignUpPage = () => {
+  const { signUp, user } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [altchaResponse, setAltchaResponse] = useState<string | null>(null); // State for Altcha response
-  const [showAltcha, setShowAltcha] = useState(false); // Control Altcha visibility
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (password.length < 8) {
       showError('Password must be at least 8 characters long.');
       return;
     }
 
     setIsLoading(true);
-    setAltchaResponse(null); // Reset Altcha response on new attempt
-    setShowAltcha(true); // Show Altcha widget to get a new challenge
+
+    try {
+      const { error } = await signUp(email, password);
+
+      if (error) {
+        // Handle specific Supabase errors
+        if (error.message.includes('User already registered')) {
+          throw new Error('An account with this email already exists. Please try logging in instead.');
+        } else if (error.message.includes('Password should be at least 6 characters')) {
+          throw new Error('Password must be at least 6 characters long.');
+        } else if (error.message.includes('Unable to validate email address')) {
+          throw new Error('Please enter a valid email address.');
+        }
+        throw error;
+      }
+
+      showSuccess('Account created successfully! Please check your email for confirmation.');
+      navigate('/login');
+    } catch (error: any) {
+      console.error('Signup error:', error);
+      showError(error.message || 'An error occurred during signup. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
-    const verifyAltchaAndSignUp = async () => {
-      if (!altchaResponse) return; // Wait for Altcha response to be set
-
-      try {
-        const response = await fetch(import.meta.env.VITE_ALTCHA_VERIFY_API_URL || '/api/verify-altcha', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-Token': document.cookie.match(/csrf-token=([^;]+)/)?.[1] || '',
-          },
-          body: JSON.stringify({ challenge: altchaResponse }),
-        });
-
-        const data = await response.json();
-
-        if (!response.ok || !data.success) {
-          throw new Error(data.error || 'Altcha verification failed.');
-        }
-
-        // Proceed with Supabase signup
-        const { error } = await supabase.auth.signUp({
-          email: email,
-          password: password,
-        });
-
-        if (error) throw error;
-
-        showSuccess('Account created! Please check your email for confirmation.');
-        navigate('/login');
-      } catch (error: any) {
-        showError(error.message || 'An unknown error occurred.');
-      } finally {
-        setIsLoading(false);
-        setShowAltcha(false); // Hide Altcha after attempt
-      }
-    };
-
-    if (altchaResponse) {
-      verifyAltchaAndSignUp();
+    if (user) {
+      navigate('/');
     }
-  }, [altchaResponse, email, password, navigate]);
+  }, [user, navigate]);
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
@@ -107,17 +89,6 @@ const SignUpPage = () => {
                 className="bg-white/5 border-white/20 focus:ring-primary"
               />
             </div>
-            {showAltcha && (
-              <AltchaWidget
-                onVerified={setAltchaResponse}
-                onError={(msg) => {
-                  showError(msg);
-                  setIsLoading(false);
-                  setShowAltcha(false);
-                }}
-                auto={false} // Set to false to manually trigger verification on form submit
-              />
-            )}
             <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={isLoading}>
               {isLoading ? 'Creating account...' : 'Create account'}
             </Button>
