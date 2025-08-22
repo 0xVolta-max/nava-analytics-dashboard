@@ -1,14 +1,4 @@
 {
-  "name": "nava-analytics-dashboard",
-  "private": true,
-  "version": "0.0.0",
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
-  },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
     "@radix-ui/react-accordion": "^1.2.0",
@@ -63,7 +53,9 @@
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^0.9.3",
     "vite-plugin-svgr": "^4.3.0",
-    "zod": "^3.23.8"
+    "zod": "^3.23.8",
+    "@altcha/react": "^1.2.0",
+    "altcha": "^1.2.0"
   },
   "devDependencies": {
     "@dyad-sh/react-vite-component-tagger": "^0.8.0",
@@ -72,7 +64,6 @@
     "@types/node": "^22.5.5",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
-    "@vercel/node": "^3.1.1",
     "@vitejs/plugin-react-swc": "^3.9.0",
     "autoprefixer": "^10.4.20",
     "eslint": "^9.9.0",

@@ -24,6 +24,6 @@
     },
     "types": ["node"] // Added 'node' types for serverless functions
   },
-  "include": ["src", "api"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "include": ["src"],
+  "exclude": ["api"],
 }

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { createClient } from '@/lib/supabaseClient';
 import { Button } from '@/components/ui/button';
@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { showError, showSuccess } from '@/utils/toast';
 import SafyLogo from '@/assets/logo.svg?react';
-import { renderTurnstile, resetTurnstile, executeTurnstile } from '@/lib/turnstile';
+import AltchaWidget from '@/components/AltchaWidget'; // Import AltchaWidget
 
 const supabase = createClient();
 
@@ -16,39 +16,39 @@ const SignUpPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
-  const [turnstileWidgetId, setTurnstileWidgetId] = useState<string | undefined>(undefined);
-  const turnstileContainerRef = useRef<HTMLDivElement>(null);
+  const [altchaResponse, setAltchaResponse] = useState<string | null>(null); // State for Altcha response
+  const [showAltcha, setShowAltcha] = useState(false); // Control Altcha visibility
 
-  useEffect(() => {
-    if (turnstileContainerRef.current && !turnstileWidgetId) {
-      const id = renderTurnstile(
-        turnstileContainerRef.current.id,
-        (token) => setTurnstileToken(token),
-        () => showError('Turnstile verification failed. Please try again.'),
-        'invisible'
-      );
-      setTurnstileWidgetId(id);
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (password.length < 8) {
+      showError('Das Passwort muss mindestens 8 Zeichen lang sein.');
+      return;
     }
-  }, [turnstileWidgetId]);
+
+    setIsLoading(true);
+    setAltchaResponse(null); // Reset Altcha response on new attempt
+    setShowAltcha(true); // Show Altcha widget to get a new challenge
+  };
 
   useEffect(() => {
-    const verifyAndSignUp = async () => {
-      if (!turnstileToken) return; // Wait for token to be set
+    const verifyAltchaAndSignUp = async () => {
+      if (!altchaResponse) return; // Wait for Altcha response to be set
 
       try {
-        const response = await fetch(import.meta.env.VITE_VERIFY_TURNSTILE_API_URL || '/api/verify-turnstile', {
+        const response = await fetch(import.meta.env.VITE_ALTCHA_VERIFY_API_URL || '/api/verify-altcha', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ token: turnstileToken }),
+          body: JSON.stringify({ challenge: altchaResponse }),
         });
 
         const data = await response.json();
 
         if (!response.ok || !data.success) {
-          throw new Error(data.error || 'Turnstile verification failed.');
+          throw new Error(data.error || 'Altcha verification failed.');
         }
 
         // Proceed with Supabase signup
@@ -63,37 +63,16 @@ const SignUpPage = () => {
         navigate('/login');
       } catch (error: any) {
         showError(error.message || 'Ein unbekannter Fehler ist aufgetreten.');
-        if (turnstileWidgetId) {
-          resetTurnstile(turnstileWidgetId); // Use the imported function
-        }
       } finally {
         setIsLoading(false);
+        setShowAltcha(false); // Hide Altcha after attempt
       }
     };
 
-    if (turnstileToken) {
-      verifyAndSignUp();
+    if (altchaResponse) {
+      verifyAltchaAndSignUp();
     }
-  }, [turnstileToken, email, password, navigate, turnstileWidgetId]);
-
-  const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (password.length < 8) {
-      showError('Das Passwort muss mindestens 8 Zeichen lang sein.');
-      return;
-    }
-
-    setIsLoading(true);
-    setTurnstileToken(null); // Reset token before execution
-    if (turnstileWidgetId) {
-      executeTurnstile(turnstileWidgetId); // Manually execute invisible Turnstile
-    } else {
-      showError('Turnstile widget not loaded. Please refresh the page.');
-      setIsLoading(false);
-      return;
-    }
-  };
+  }, [altchaResponse, email, password, navigate]);
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
@@ -128,8 +107,17 @@ const SignUpPage = () => {
                 className="bg-white/5 border-white/20 focus:ring-primary"
               />
             </div>
-            {/* Turnstile container */}
-            <div ref={turnstileContainerRef} id="signup-turnstile-container" className="min-h-[1px]"></div>
+            {showAltcha && (
+              <AltchaWidget
+                onVerified={setAltchaResponse}
+                onError={(msg) => {
+                  showError(msg);
+                  setIsLoading(false);
+                  setShowAltcha(false);
+                }}
+                auto={false} // Set to false to manually trigger verification on form submit
+              />
+            )}
             <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={isLoading}>
               {isLoading ? 'Konto wird erstellt...' : 'Konto erstellen'}
             </Button>

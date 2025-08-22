@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { createClient } from '@/lib/supabaseClient';
 import { Button } from '@/components/ui/button';
@@ -7,61 +7,23 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { showError, showSuccess } from '@/utils/toast';
 import SafyLogo from '@/assets/logo.svg?react';
-import { renderTurnstile, resetTurnstile, executeTurnstile } from '@/lib/turnstile';
+import AltchaWidget from '@/components/AltchaWidget'; // Import AltchaWidget
 
 const supabase = createClient();
-
-const LOGIN_ATTEMPT_LIMIT = 3; // Number of failed attempts before Turnstile is required
 
 const LoginPage = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [failedAttempts, setFailedAttempts] = useState(0);
-  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
-  const [turnstileWidgetId, setTurnstileWidgetId] = useState<string | undefined>(undefined);
-  const turnstileContainerRef = useRef<HTMLDivElement>(null);
-
-  const isTurnstileRequired = failedAttempts >= LOGIN_ATTEMPT_LIMIT;
-
-  useEffect(() => {
-    if (isTurnstileRequired && turnstileContainerRef.current && !turnstileWidgetId) {
-      const id = renderTurnstile(
-        turnstileContainerRef.current.id,
-        (token) => setTurnstileToken(token),
-        () => showError('Turnstile verification failed. Please try again.'),
-        'normal' // Use 'normal' size for visibility when required
-      );
-      setTurnstileWidgetId(id);
-    } else if (!isTurnstileRequired && turnstileWidgetId) {
-      // If Turnstile is no longer required, remove the widget
-      // The resetTurnstile function already handles the window.turnstile check internally
-      resetTurnstile(turnstileWidgetId);
-      if (window.turnstile) { // Only remove if turnstile is loaded
-        window.turnstile.remove(turnstileWidgetId);
-      }
-      setTurnstileWidgetId(undefined);
-    }
-  }, [isTurnstileRequired, turnstileWidgetId]);
+  const [altchaResponse, setAltchaResponse] = useState<string | null>(null); // State for Altcha response
+  const [showAltcha, setShowAltcha] = useState(false); // Control Altcha visibility
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-
-    if (isTurnstileRequired) {
-      setTurnstileToken(null); // Reset token before execution
-      if (turnstileWidgetId) {
-        executeTurnstile(turnstileWidgetId); // Manually execute Turnstile
-      } else {
-        showError('Turnstile widget not loaded. Please refresh the page.');
-        setIsLoading(false);
-        return;
-      }
-    } else {
-      // If Turnstile is not required, proceed directly
-      await attemptLogin();
-    }
+    setAltchaResponse(null); // Reset Altcha response on new attempt
+    setShowAltcha(true); // Show Altcha widget to get a new challenge
   };
 
   const attemptLogin = async () => {
@@ -72,7 +34,6 @@ const LoginPage = () => {
       });
 
       if (error) {
-        setFailedAttempts(prev => prev + 1); // Increment failed attempts
         if (error.message.includes('Email not confirmed')) {
           showError('Bitte bestätigen Sie Ihre E-Mail-Adresse, bevor Sie sich anmelden.');
           return;
@@ -81,53 +42,47 @@ const LoginPage = () => {
       }
 
       showSuccess('Logged in successfully!');
-      setFailedAttempts(0); // Reset failed attempts on success
       navigate('/');
     } catch (error: any) {
       showError(error.message || 'An unknown error occurred.');
-      if (isTurnstileRequired && turnstileWidgetId) {
-        resetTurnstile(turnstileWidgetId); // Use the imported function
-      }
     } finally {
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    const verifyAndLogin = async () => {
-      if (!turnstileToken) return; // Wait for token to be set
+    const verifyAltchaAndLogin = async () => {
+      if (!altchaResponse) return; // Wait for Altcha response to be set
 
       try {
-        const response = await fetch(import.meta.env.VITE_VERIFY_TURNSTILE_API_URL || '/api/verify-turnstile', {
+        const response = await fetch(import.meta.env.VITE_ALTCHA_VERIFY_API_URL || '/api/verify-altcha', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ token: turnstileToken }),
+          body: JSON.stringify({ challenge: altchaResponse }),
         });
 
         const data = await response.json();
 
         if (!response.ok || !data.success) {
-          throw new Error(data.error || 'Turnstile verification failed.');
+          throw new Error(data.error || 'Altcha verification failed.');
         }
 
-        // Proceed with Supabase login after Turnstile verification
+        // Proceed with Supabase login after Altcha verification
         await attemptLogin();
       } catch (error: any) {
         showError(error.message || 'Ein unbekannter Fehler ist aufgetreten.');
-        if (turnstileWidgetId) {
-          resetTurnstile(turnstileWidgetId); // Use the imported function
-        }
       } finally {
         setIsLoading(false);
+        setShowAltcha(false); // Hide Altcha after attempt
       }
     };
 
-    if (turnstileToken && isTurnstileRequired) {
-      verifyAndLogin();
+    if (altchaResponse) {
+      verifyAltchaAndLogin();
     }
-  }, [turnstileToken, isTurnstileRequired, turnstileWidgetId]);
+  }, [altchaResponse]);
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
@@ -170,8 +125,16 @@ const LoginPage = () => {
                 className="bg-white/5 border-white/20 focus:ring-primary"
               />
             </div>
-            {isTurnstileRequired && (
-              <div ref={turnstileContainerRef} id="login-turnstile-container" className="mt-2 flex justify-center"></div>
+            {showAltcha && (
+              <AltchaWidget
+                onVerified={setAltchaResponse}
+                onError={(msg) => {
+                  showError(msg);
+                  setIsLoading(false);
+                  setShowAltcha(false);
+                }}
+                auto={false} // Set to false to manually trigger verification on form submit
+              />
             )}
             <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={isLoading}>
               {isLoading ? 'Logging in...' : 'Login'}

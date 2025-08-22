@@ -17,6 +17,7 @@ Willkommen zu Ihrem NAVA Analytics Dashboard, einer leistungsstarken und visuell
 - [x] Implemented user authentication (Login, Sign Up, Forgot/Reset Password) with Supabase.
 - [x] Set up protected and public routes using React Router.
 - [x] **Integrated Cloudflare Turnstile for enhanced security on Login/Signup.**
+- [x] **Replaced Cloudflare Turnstile with Altcha for enhanced security on Login/Signup.**
 
 ### Next Steps (Todos)
 - [ ] **Backend & Data Integration (High Priority)**:
@@ -43,13 +44,13 @@ This project is configured for easy deployment on [Vercel](https://vercel.com/).
 
 To deploy, connect your Git repository to a Vercel project. Every push to the main branch will automatically trigger a new deployment.
 
-**Wichtige Hinweise zur Turnstile-Integration:**
+**Wichtige Hinweise zur Altcha-Integration:**
 
-*   **Umgebungsvariablen:** Für die Cloudflare Turnstile-Integration musst du die folgenden Umgebungsvariablen in deinem Vercel-Projekt (Project Settings > Environment Variables) setzen:
-    *   `VITE_TURNSTILE_SITE_KEY`: Dies ist dein "Site Key" für das Frontend.
-    *   `TURNSTILE_SECRET_KEY`: Dies ist dein "Secret Key" für die Backend-Verifizierung.
-    *   `VITE_VERIFY_TURNSTILE_API_URL`: Setze diesen auf `/api/verify-turnstile`.
-*   **Lokale Entwicklung:** Die `api/verify-turnstile.ts`-Datei ist eine [Vercel Serverless Function](https://vercel.com/docs/functions/serverless-functions). Sie wird **nicht** vom lokalen Vite-Entwicklungsserver ausgeführt. Daher wird die Turnstile-Verifizierung nur funktionieren, wenn die Anwendung auf Vercel bereitgestellt wird. Bei lokaler Ausführung kann es zu `404 Not Found`-Fehlern für diesen Endpunkt kommen.
+*   **Umgebungsvariablen:** Für die Altcha-Integration musst du die folgenden Umgebungsvariablen in deinem Vercel-Projekt (Project Settings > Environment Variables) setzen:
+    *   `VITE_ALTCHA_CHALLENGE_API_URL`: Setze diesen auf `/api/altcha-challenge`.
+    *   `VITE_ALTCHA_VERIFY_API_URL`: Setze diesen auf `/api/verify-altcha`.
+    *   `ALTCHA_SECRET_KEY`: Dies ist ein geheimer Schlüssel, der für die Generierung und Verifizierung von Altcha-Challenges verwendet wird. Er sollte ein langer, zufälliger String sein und nur serverseitig verwendet werden.
+*   **Lokale Entwicklung:** Die `api/altcha-challenge.ts` und `api/verify-altcha.ts`-Dateien sind [Vercel Serverless Functions](https://vercel.com/docs/functions/serverless-functions). Sie werden **nicht** vom lokalen Vite-Entwicklungsserver ausgeführt. Daher wird die Altcha-Verifizierung nur funktionieren, wenn die Anwendung auf Vercel bereitgestellt wird. Bei lokaler Ausführung kann es zu `404 Not Found`-Fehlern für diese Endpunkte kommen.
 
 ## Database & SQL
 
