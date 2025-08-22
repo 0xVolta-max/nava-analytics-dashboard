@@ -52,9 +52,7 @@
     "tailwind-merge": "^2.5.2",
     "vaul": "^0.9.3",
     "vite-plugin-svgr": "^4.3.0",
-    "zod": "^3.23.8",
-    "altcha-react": "^1.2.0",
-    "altcha": "^1.2.0"
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@dyad-sh/react-vite-component-tagger": "^0.8.0",
