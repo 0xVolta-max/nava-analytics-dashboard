@@ -20,24 +20,57 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    let isMounted = true;
+
     const getSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setSession(session);
-      setUser(session?.user ?? null);
-      setIsLoading(false);
+      try {
+        console.log('AuthContext: Getting session...');
+        const { data: { session }, error } = await supabase.auth.getSession();
+
+        if (error) {
+          console.error('AuthContext: Error getting session:', error);
+        }
+
+        if (isMounted) {
+          setSession(session);
+          setUser(session?.user ?? null);
+          setIsLoading(false);
+          console.log('AuthContext: Session loaded, user:', session?.user?.email || 'none');
+        }
+      } catch (error) {
+        console.error('AuthContext: Exception getting session:', error);
+        if (isMounted) {
+          setSession(null);
+          setUser(null);
+          setIsLoading(false);
+        }
+      }
     };
 
     getSession();
 
+    // Add timeout to prevent infinite loading
+    const loadingTimeout = setTimeout(() => {
+      if (isMounted && isLoading) {
+        console.warn('AuthContext: Loading timeout reached, forcing completion');
+        setIsLoading(false);
+      }
+    }, 10000); // 10 second timeout
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_event: AuthChangeEvent, session: Session | null) => {
-        setSession(session);
-        setUser(session?.user ?? null);
+        if (isMounted) {
+          console.log('AuthContext: Auth state changed, user:', session?.user?.email || 'none');
+          setSession(session);
+          setUser(session?.user ?? null);
+        }
       }
     );
 
     return () => {
+      isMounted = false;
       subscription.unsubscribe();
+      clearTimeout(loadingTimeout);
     };
   }, []);
 
@@ -62,7 +95,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     signOut,
   };
 
-  return <AuthContext.Provider value={value}>{!isLoading && children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={value}>
+      {isLoading ? (
+        <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-gray-600 dark:text-gray-400">Loading application...</p>
+          </div>
+        </div>
+      ) : (
+        children
+      )}
+    </AuthContext.Provider>
+  );
 };
 
 export const useAuth = () => {
