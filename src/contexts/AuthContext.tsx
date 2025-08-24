@@ -7,8 +7,8 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   isLoading: boolean;
-  signIn: (email: string, password: string) => Promise<{ error: any }>;
-  signUp: (email: string, password: string) => Promise<{ error: any }>;
+  signIn: (email: string, password: string, altchaToken: string) => Promise<{ error: any }>;
+  signUp: (email: string, password: string, altchaToken: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
 }
 
@@ -74,11 +74,37 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
   }, []);
 
-  const signIn = async (email: string, password: string) => {
+  const signIn = async (email: string, password: string, altchaToken: string) => {
+    const verifyResponse = await fetch('/api/verify-altcha', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ payload: altchaToken }),
+    });
+
+    if (!verifyResponse.ok) {
+      const errorData = await verifyResponse.json();
+      throw new Error(errorData.message || 'ALTCHA verification failed.');
+    }
+
     return supabase.auth.signInWithPassword({ email, password });
   };
 
-  const signUp = async (email: string, password: string) => {
+  const signUp = async (email: string, password: string, altchaToken: string) => {
+    const verifyResponse = await fetch('/api/verify-altcha', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ payload: altchaToken }),
+    });
+
+    if (!verifyResponse.ok) {
+      const errorData = await verifyResponse.json();
+      throw new Error(errorData.message || 'ALTCHA verification failed.');
+    }
+
     return supabase.auth.signUp({ email, password });
   };
 

@@ -37,13 +37,15 @@ const LoginPage = () => {
 
     console.log('Login form submitted, preventing default behavior');
 
+    if (!altchaToken) {
+      showError('Please complete the bot verification.');
+      return;
+    }
+
     setIsLoading(true);
 
     try {
-      // Altcha verification is completely optional for now
-      console.log('Processing login without Altcha verification...');
-
-      const { error } = await signIn(email, password);
+      const { error } = await signIn(email, password, altchaToken);
 
       if (error) {
         console.error('Login error:', error);

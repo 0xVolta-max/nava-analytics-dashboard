@@ -42,13 +42,15 @@ const SignUpPage = () => {
       return;
     }
 
+    if (!altchaToken) {
+      showError('Please complete the bot verification.');
+      return;
+    }
+
     setIsLoading(true);
 
     try {
-      // Altcha verification is completely optional for now
-      console.log('Processing signup without Altcha verification...');
-
-      const { error } = await signUp(email, password);
+      const { error } = await signUp(email, password, altchaToken);
 
       if (error) {
         console.error('Signup error:', error);
