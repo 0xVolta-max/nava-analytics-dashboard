@@ -22,6 +22,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     let isMounted = true;
+    let loadingTimeout: NodeJS.Timeout;
 
     const getSession = async () => {
       try {
@@ -48,32 +49,39 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
     };
 
+    // Start loading session
     getSession();
 
-    // Add timeout to prevent infinite loading
-    const loadingTimeout = setTimeout(() => {
-      if (isMounted && isLoading) {
-        console.warn('AuthContext: Loading timeout reached, forcing completion');
-        setIsLoading(false);
-      }
-    }, 10000); // 10 second timeout
-
+    // Set up auth state change listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_event: AuthChangeEvent, session: Session | null) => {
         if (isMounted) {
           console.log('AuthContext: Auth state changed, user:', session?.user?.email || 'none');
           setSession(session);
           setUser(session?.user ?? null);
+          setIsLoading(false); // Ensure loading is set to false on auth state changes
         }
       }
     );
 
+    // Add timeout to prevent infinite loading - set after initial session load
+    loadingTimeout = setTimeout(() => {
+      if (isMounted && isLoading) {
+        console.warn('AuthContext: Loading timeout reached, forcing completion');
+        setIsLoading(false);
+      }
+    }, 5000); // Reduced to 5 second timeout
+
     return () => {
       isMounted = false;
-      subscription.unsubscribe();
-      clearTimeout(loadingTimeout);
+      if (subscription) {
+        subscription.unsubscribe();
+      }
+      if (loadingTimeout) {
+        clearTimeout(loadingTimeout);
+      }
     };
-  }, []);
+  }, [isLoading]); // Added isLoading as dependency to handle timeout properly
 
   const signIn = async (email: string, password: string, altchaToken: string) => {
     const verifyResponse = await fetch('/api/verify-altcha', {

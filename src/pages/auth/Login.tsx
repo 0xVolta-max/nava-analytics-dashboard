@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { showError, showSuccess } from '@/utils/toast';
 import TurnstileWidget from '@/components/TurnstileWidget';
 import SafyLogo from '@/assets/logo.svg?react';
+import { supabase } from '@/lib/supabaseClient';
 
 const LoginPage = () => {
   const { setSession, user } = useAuth();
@@ -18,54 +19,72 @@ const LoginPage = () => {
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [turnstileError, setTurnstileError] = useState<string | null>(null);
 
-  const handleTurnstileVerified = (token: string) => {
+  const handleTurnstileVerified = useCallback((token: string) => {
+    console.log('🎯 [LOGIN] Turnstile verification successful, token received:', token.substring(0, 20) + '...');
     setTurnstileToken(token);
     setTurnstileError(null);
-    console.log('Turnstile verification successful');
-  };
+  }, []);
 
-  const handleTurnstileError = (error: string) => {
+  const handleTurnstileError = useCallback((error: string) => {
+    console.error('❌ [LOGIN] Turnstile error:', error);
     setTurnstileError(error);
     setTurnstileToken(null);
     showError(`Bot verification failed: ${error}`);
-  };
+  }, []);
 
-  const handleTurnstileExpired = () => {
+  const handleTurnstileExpired = useCallback(() => {
+    console.log('⏰ [LOGIN] Turnstile token expired');
     setTurnstileToken(null);
-    console.log('Turnstile token expired');
-  };
+  }, []);
+
+  const handleTurnstileReset = useCallback(() => {
+    console.log('🔄 [LOGIN] Turnstile widget reset');
+    setTurnstileToken(null);
+    setTurnstileError(null);
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     // CRITICAL: Prevent any form submission that could cause page reload
     e.preventDefault();
     e.stopPropagation();
 
-    console.log('Login form submitted, preventing default behavior');
+    console.log('📋 [LOGIN] Form submitted');
+    console.log('🔑 [LOGIN] Current turnstileToken:', turnstileToken ? turnstileToken.substring(0, 20) + '...' : 'NULL');
 
     if (!turnstileToken) {
+      console.error('❌ [LOGIN] No turnstile token available');
       showError('Please complete the bot verification.');
       return;
     }
 
+    console.log('✅ [LOGIN] Token verified, proceeding with login...');
+
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password, turnstileToken }),
+      console.log('🚀 [SUPABASE] Attempting direct Supabase login...');
+      
+      // Direkte Supabase Authentifizierung
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Login failed');
+      if (error) {
+        console.error('❌ [SUPABASE] Login error:', error);
+        throw new Error(error.message);
       }
 
-      setSession(data.session);
-      showSuccess('Logged in successfully!');
+      if (!data.session) {
+        throw new Error('No session returned from Supabase');
+      }
+
+      console.log('✅ [SUPABASE] Login successful, session:', data.session.user?.email);
+      
+      // Session wird automatisch durch AuthContext verwaltet
+      // setSession(data.session); // Das macht der AuthContext automatisch
+      
+      showSuccess('Login successful! ✅');
 
       // Clear form data
       setEmail('');
@@ -73,8 +92,10 @@ const LoginPage = () => {
       setTurnstileToken(null);
       setTurnstileError(null);
 
+      console.log('🎯 [LOGIN] Form cleared, navigation should happen via AuthContext');
+
     } catch (error: any) {
-      console.error('Login failed:', error);
+      console.error('❌ [SUPABASE] Login failed:', error);
       showError(error.message || 'Login failed. Please try again.');
     } finally {
       setIsLoading(false);
@@ -137,6 +158,7 @@ const LoginPage = () => {
                   onVerified={handleTurnstileVerified}
                   onError={handleTurnstileError}
                   onExpired={handleTurnstileExpired}
+                  onReset={handleTurnstileReset}
                 />
               </div>
               {turnstileError && (
