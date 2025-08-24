@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import 'altcha/altcha-widget.js';
+import 'altcha';
 
 declare global {
   namespace JSX {
