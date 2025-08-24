@@ -10,7 +10,7 @@ import AltchaWidget from '@/components/AltchaWidget';
 import SafyLogo from '@/assets/logo.svg?react';
 
 const LoginPage = () => {
-  const { signIn, user } = useAuth();
+  const { setSession, user } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -45,18 +45,21 @@ const LoginPage = () => {
     setIsLoading(true);
 
     try {
-      const { error } = await signIn(email, password, altchaToken);
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password, altchaPayload: altchaToken }),
+      });
 
-      if (error) {
-        console.error('Login error:', error);
-        if (error.message.includes('Email not confirmed')) {
-          showError('Please confirm your email address before logging in.');
-          return;
-        }
-        throw error;
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Login failed');
       }
 
-      console.log('Login successful, showing success message');
+      setSession(data.session);
       showSuccess('Logged in successfully!');
 
       // Clear form data

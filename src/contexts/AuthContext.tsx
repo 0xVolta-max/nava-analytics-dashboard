@@ -10,6 +10,7 @@ interface AuthContextType {
   signIn: (email: string, password: string, altchaToken: string) => Promise<{ error: any }>;
   signUp: (email: string, password: string, altchaToken: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
+  setSession: (session: Session | null) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -112,6 +113,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     await supabase.auth.signOut();
   };
 
+  const setSessionAndUpdateUser = (session: Session | null) => {
+    setSession(session);
+    setUser(session?.user ?? null);
+  };
+
   const value = {
     user,
     session,
@@ -119,6 +125,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     signIn,
     signUp,
     signOut,
+    setSession: setSessionAndUpdateUser,
   };
 
   return (

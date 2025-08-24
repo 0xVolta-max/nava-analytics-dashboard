@@ -1,11 +1,13 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { generateChallenge } from 'altcha';
+import { randomBytes } from 'crypto';
+import { createHmac } from 'crypto';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  if (req.method !== 'GET') {
+  if (req.method !== 'POST') {
     return res.status(405).json({ success: false, error: 'Method Not Allowed' });
   }
 
+  const { action = 'login' } = req.body;
   const secretKey = process.env.ALTCHA_SECRET_KEY;
 
   if (!secretKey) {
@@ -14,10 +16,25 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    const challenge = await generateChallenge({ secret: secretKey });
-    return res.status(200).json(challenge);
+    // Generate a random challenge string
+    const challenge = randomBytes(32).toString('base64url');
+    const salt = randomBytes(16).toString('base64url');
+
+    // Create signature: HMAC-SHA256 of (challenge + action + salt)
+    const signatureData = `${challenge}${action}${salt}`;
+    const signature = createHmac('sha256', secretKey)
+      .update(signatureData)
+      .digest('base64url');
+
+    return res.status(200).json({
+      success: true,
+      challenge: challenge,
+      salt: salt,
+      signature: signature,
+      algorithm: 'SHA-256'
+    });
   } catch (error) {
     console.error('Error generating Altcha challenge:', error);
-    return res.status(500).json({ success: false, error: 'Internal server error during challenge generation' });
+    return res.status(500).json({ success: false, error: 'Failed to generate challenge' });
   }
 }
