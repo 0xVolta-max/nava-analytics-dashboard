@@ -6,9 +6,9 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({ success: false, error: 'Method Not Allowed' });
   }
 
-  const csrfToken = randomBytes(32).toString('hex');
+  const token = randomBytes(32).toString('hex');
 
-  res.setHeader('Set-Cookie', `csrf-token=${csrfToken}; Path=/; HttpOnly; SameSite=Strict`);
+  res.setHeader('Set-Cookie', `csrf-token=${token}; HttpOnly; Path=/; SameSite=Strict`);
 
-  return res.status(200).json({ success: true });
+  res.status(200).json({ success: true, token });
 }
