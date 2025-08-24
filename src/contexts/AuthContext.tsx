@@ -80,7 +80,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ payload: altchaToken }),
+      body: JSON.stringify({ challenge: altchaToken }),
     });
 
     if (!verifyResponse.ok) {
@@ -97,7 +97,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ payload: altchaToken }),
+      body: JSON.stringify({ challenge: altchaToken }),
     });
 
     if (!verifyResponse.ok) {
