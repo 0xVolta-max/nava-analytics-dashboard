@@ -15,16 +15,21 @@ const AltchaWidget: React.FC<AltchaWidgetProps> = ({ onVerified, onError }) => {
   useEffect(() => {
     const fetchCsrfToken = async () => {
       try {
+        console.log('🔄 Fetching CSRF token...');
         const response = await fetch('/api/csrf-token');
+        console.log('📡 CSRF Response status:', response.status);
         const data = await response.json();
+        console.log('📦 CSRF Response data:', data);
+
         if (data.success) {
+          console.log('✅ CSRF token received:', data.token);
           setCsrfToken(data.token);
         } else {
-          throw new Error('Failed to get CSRF token');
+          throw new Error('Failed to get CSRF token: ' + (data.error || 'Unknown error'));
         }
       } catch (error) {
-        console.error('Failed to fetch CSRF token:', error);
-        onError('Failed to initialize bot protection.');
+        console.error('❌ Failed to fetch CSRF token:', error);
+        onError('Failed to initialize bot protection: ' + (error instanceof Error ? error.message : String(error)));
       } finally {
         setIsLoading(false);
       }

@@ -7,7 +7,7 @@
 
 const fetch = require('node-fetch');
 
-const BASE_URL = 'http://localhost:5173'; // Adjust if needed
+const BASE_URL = 'http://localhost:8081'; // Vite dev server port
 
 async function testAltchaIntegration() {
   console.log('🧪 Testing Altcha Integration...\n');
