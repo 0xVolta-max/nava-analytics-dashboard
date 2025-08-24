@@ -29,7 +29,6 @@ const AltchaWidget: React.FC<AltchaWidgetProps> = ({ onVerified, onError, auto }
     <altcha-widget
       ref={ref}
       challengeurl={import.meta.env.VITE_ALTCHA_CHALLENGE_API_URL}
-      auto={auto ? 'onload' : undefined}
     ></altcha-widget>
   );
 };
