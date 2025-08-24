@@ -148,3 +148,5 @@ Sendet neue Verifikation
 - **User-Binding**: Tokens sind an spezifische User gebunden
 
 ## Database & SQL
+
+<!-- Forcing a new commit to trigger Vercel deployment -->
