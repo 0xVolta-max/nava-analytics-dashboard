@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { showError, showSuccess } from '@/utils/toast';
-import AltchaWidget from '@/components/AltchaWidget';
+import TurnstileWidget from '@/components/TurnstileWidget';
 import SafyLogo from '@/assets/logo.svg?react';
 
 const LoginPage = () => {
@@ -15,19 +15,24 @@ const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [altchaToken, setAltchaToken] = useState<string | null>(null);
-  const [altchaError, setAltchaError] = useState<string | null>(null);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [turnstileError, setTurnstileError] = useState<string | null>(null);
 
-  const handleAltchaVerified = (token: string) => {
-    setAltchaToken(token);
-    setAltchaError(null);
-    console.log('Altcha verification successful');
+  const handleTurnstileVerified = (token: string) => {
+    setTurnstileToken(token);
+    setTurnstileError(null);
+    console.log('Turnstile verification successful');
   };
 
-  const handleAltchaError = (error: string) => {
-    setAltchaError(error);
-    setAltchaToken(null);
+  const handleTurnstileError = (error: string) => {
+    setTurnstileError(error);
+    setTurnstileToken(null);
     showError(`Bot verification failed: ${error}`);
+  };
+
+  const handleTurnstileExpired = () => {
+    setTurnstileToken(null);
+    console.log('Turnstile token expired');
   };
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -37,7 +42,7 @@ const LoginPage = () => {
 
     console.log('Login form submitted, preventing default behavior');
 
-    if (!altchaToken) {
+    if (!turnstileToken) {
       showError('Please complete the bot verification.');
       return;
     }
@@ -50,7 +55,7 @@ const LoginPage = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password, altchaPayload: altchaToken }),
+        body: JSON.stringify({ email, password, turnstileToken }),
       });
 
       const data = await response.json();
@@ -65,8 +70,8 @@ const LoginPage = () => {
       // Clear form data
       setEmail('');
       setPassword('');
-      setAltchaToken(null);
-      setAltchaError(null);
+      setTurnstileToken(null);
+      setTurnstileError(null);
 
     } catch (error: any) {
       console.error('Login failed:', error);
@@ -124,16 +129,17 @@ const LoginPage = () => {
               />
             </div>
 
-            {/* Bot Protection - Robust Altcha Integration */}
+            {/* Bot Protection - Cloudflare Turnstile */}
             <div className="space-y-2">
               <Label className="text-sm text-white/80">Bot Protection</Label>
               <div className="min-h-[65px]">
-                <AltchaWidget
-                  onVerified={handleAltchaVerified}
-                  onError={handleAltchaError}
+                <TurnstileWidget
+                  onVerified={handleTurnstileVerified}
+                  onError={handleTurnstileError}
+                  onExpired={handleTurnstileExpired}
                 />
               </div>
-              {altchaError && (
+              {turnstileError && (
                 <div className="p-3 bg-yellow-500/20 border border-yellow-500/30 rounded-md">
                   <div className="flex items-center space-x-2 text-yellow-400">
                     <div className="w-4 h-4 bg-yellow-500 rounded-full flex items-center justify-center">

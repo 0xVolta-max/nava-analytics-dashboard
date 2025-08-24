@@ -26,21 +26,40 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  const { email, password, altchaPayload } = req.body;
+  const { email, password, turnstileToken } = req.body;
 
-  if (!email || !password || !altchaPayload) {
-    return res.status(400).json({ error: 'Email, password, and altchaPayload are required.' });
+  if (!email || !password || !turnstileToken) {
+    return res.status(400).json({ error: 'Email, password, and turnstileToken are required.' });
   }
 
-  // 1. Verify Altcha challenge
-  const altchaResult = await verifyChallenge(altchaPayload, altchaSecret);
-  if (!altchaResult.verified) {
-    console.error('Altcha verification failed:', altchaResult.error);
-    return res.status(401).json({ error: 'CAPTCHA verification failed.' });
+  // 1. Verify Turnstile token
+  try {
+    const turnstileResponse = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams({
+        secret: process.env.TURNSTILE_SECRET_KEY || '',
+        response: turnstileToken,
+      }),
+    });
+
+    const turnstileResult = await turnstileResponse.json();
+
+    if (!turnstileResult.success) {
+      console.error('Turnstile verification failed:', turnstileResult);
+      return res.status(401).json({ error: 'CAPTCHA verification failed.' });
+    }
+
+    console.log('✅ Turnstile verification successful');
+  } catch (error) {
+    console.error('Error verifying Turnstile token:', error);
+    return res.status(500).json({ error: 'CAPTCHA verification error.' });
   }
 
   // 2. Authenticate with Supabase
-  const { data, error } = await supabase.auth.signInWithPassword({
+  const { data, error } = await (supabase.auth as any).signInWithPassword({
     email,
     password,
   });

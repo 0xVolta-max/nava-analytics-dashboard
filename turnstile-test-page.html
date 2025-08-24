@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Turnstile Test Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .status {
+            margin: 20px 0;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .status.loading { background: #e3f2fd; color: #1976d2; }
+        .status.success { background: #e8f5e8; color: #2e7d32; }
+        .status.error { background: #ffebee; color: #c62828; }
+        .logs {
+            background: #f8f8f8;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .token-display {
+            background: #f0f0f0;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            word-break: break-all;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Cloudflare Turnstile Test</h1>
+
+        <div class="test-section">
+            <h2>Turnstile Widget</h2>
+            <div id="turnstile-widget"></div>
+            <div id="widget-status" class="status">Loading...</div>
+        </div>
+
+        <div class="test-section">
+            <h2>Verification Test</h2>
+            <button onclick="testVerification()">Test Verification</button>
+            <div id="verification-status" class="status">Not tested</div>
+            <div id="token-display" class="token-display" style="display: none;">
+                <strong>Token:</strong><br>
+                <span id="token-value">None</span>
+            </div>
+        </div>
+
+        <div class="logs">
+            <strong>Console Logs:</strong>
+            <div id="log-container"></div>
+        </div>
+    </div>
+
+    <script>
+        let turnstileToken = null;
+
+        // Override console.log to show in our log container
+        const originalLog = console.log;
+        const originalError = console.error;
+
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            logToContainer('LOG', args.join(' '));
+        };
+
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            logToContainer('ERROR', args.join(' '));
+        };
+
+        function logToContainer(type, message) {
+            const container = document.getElementById('log-container');
+            const timestamp = new Date().toLocaleTimeString();
+            container.innerHTML += `<div>[${timestamp}] ${type}: ${message}</div>`;
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // Load Turnstile script
+        function loadTurnstile() {
+            const script = document.createElement('script');
+            script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+            script.async = true;
+            script.defer = true;
+            document.head.appendChild(script);
+
+            script.onload = () => {
+                console.log('🔄 Turnstile script loaded');
+                initializeWidget();
+            };
+
+            script.onerror = () => {
+                console.error('❌ Failed to load Turnstile script');
+                document.getElementById('widget-status').className = 'status error';
+                document.getElementById('widget-status').textContent = 'Failed to load Turnstile script';
+            };
+        }
+
+        // Initialize Turnstile widget
+        function initializeWidget() {
+            console.log('🎯 Initializing Turnstile widget');
+
+            if (typeof window.turnstile !== 'undefined') {
+                try {
+                    window.turnstile.render('#turnstile-widget', {
+                        sitekey: '0x4AAAAAABt7u_Co2b2tEbcj',
+                        theme: 'light',
+                        callback: (token) => {
+                            console.log('✅ Turnstile verification successful');
+                            turnstileToken = token;
+                            document.getElementById('widget-status').className = 'status success';
+                            document.getElementById('widget-status').textContent = 'Verification successful!';
+                            document.getElementById('token-display').style.display = 'block';
+                            document.getElementById('token-value').textContent = token;
+                        },
+                        'error-callback': (error) => {
+                            console.error('❌ Turnstile error:', error);
+                            document.getElementById('widget-status').className = 'status error';
+                            document.getElementById('widget-status').textContent = `Error: ${error}`;
+                        },
+                        'expired-callback': () => {
+                            console.log('⏰ Turnstile token expired');
+                            turnstileToken = null;
+                            document.getElementById('widget-status').className = 'status error';
+                            document.getElementById('widget-status').textContent = 'Token expired - please verify again';
+                        }
+                    });
+
+                    document.getElementById('widget-status').textContent = 'Widget loaded - please complete verification';
+
+                } catch (error) {
+                    console.error('❌ Failed to initialize Turnstile:', error);
+                    document.getElementById('widget-status').className = 'status error';
+                    document.getElementById('widget-status').textContent = 'Failed to initialize widget';
+                }
+            } else {
+                console.error('❌ Turnstile API not available');
+                document.getElementById('widget-status').className = 'status error';
+                document.getElementById('widget-status').textContent = 'Turnstile API not available';
+            }
+        }
+
+        // Test verification endpoint
+        window.testVerification = async function() {
+            if (!turnstileToken) {
+                alert('Please complete the Turnstile verification first!');
+                return;
+            }
+
+            const statusDiv = document.getElementById('verification-status');
+            statusDiv.className = 'status loading';
+            statusDiv.textContent = 'Verifying token...';
+
+            try {
+                const response = await fetch('/api/verify-turnstile', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ token: turnstileToken })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    statusDiv.className = 'status success';
+                    statusDiv.textContent = '✅ Verification successful!';
+                } else {
+                    statusDiv.className = 'status error';
+                    statusDiv.textContent = `❌ Verification failed: ${data.error}`;
+                }
+            } catch (error) {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = `❌ Error: ${error.message}`;
+            }
+        };
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Turnstile Test Page loaded');
+            loadTurnstile();
+        });
+    </script>
+</body>
+</html>
