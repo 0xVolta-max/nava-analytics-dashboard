@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import 'altcha';
+import 'altcha/altcha.css';
 
 interface AltchaWidgetProps {
   onVerified: (token: string) => void;
