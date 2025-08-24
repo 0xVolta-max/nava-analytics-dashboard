@@ -128,7 +128,6 @@ const LoginPage = () => {
                 <AltchaWidget
                   onVerified={handleAltchaVerified}
                   onError={handleAltchaError}
-                  auto={true}
                 />
               </div>
               {altchaError && (

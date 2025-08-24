@@ -130,7 +130,6 @@ const SignUpPage = () => {
                 <AltchaWidget
                   onVerified={handleAltchaVerified}
                   onError={handleAltchaError}
-                  auto={true}
                 />
               </div>
               {altchaError && (

@@ -5,10 +5,9 @@ import 'altcha/altcha.css';
 interface AltchaWidgetProps {
   onVerified: (token: string) => void;
   onError: (error: string) => void;
-  auto?: boolean;
 }
 
-const AltchaWidget: React.FC<AltchaWidgetProps> = ({ onVerified, onError, auto }) => {
+const AltchaWidget: React.FC<AltchaWidgetProps> = ({ onVerified, onError }) => {
   const ref = useRef<any>(null);
 
   useEffect(() => {
