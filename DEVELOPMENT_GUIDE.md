@@ -174,6 +174,65 @@ if (!turnstileToken) {
 // Memory Leak Prevention
 ```
 
+### 5. 🚨 NEUE KRITISCHE REGEL: AuthContext signIn Methode
+
+**Datei:** `src/contexts/AuthContext.tsx`
+
+**⚠️ EXTREM KRITISCH - NUR DIREKTE SUPABASE CLIENT CALLS VERWENDEN!**
+
+```typescript
+// ⛔ DIESE BEREICHE NICHT ÄNDERN - FUNKTIONIERT PERFEKT!
+
+// 1. Direkte Supabase Authentifizierung (Zeilen 64-85)
+const signIn = async (email: string, password: string, turnstileToken: string) => {
+  console.log('AuthContext: Starting direct Supabase sign-in.');
+
+  // DEV-Überspringung - für Production entfernen
+  if (import.meta.env.DEV) {
+    console.log('✅ [AuthContext] Skipping Turnstile verification in development mode');
+  }
+
+  // DIREKTER Supabase Call - KEINE API-ROUTE!
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email, password,
+  });
+
+  return { error: null };
+};
+```
+
+**Warum diese Implementierung kritisch ist:**
+
+#### ❌ VERBOTENE Änderungen:
+- ❌ **API-Route hinzufügen:** `fetch('/api/auth/login', ...)` - Führt zu 404-Fehlern
+- ❌ **HTTP-Requests verwenden:** Jegliche fetch() Calls für Authentifizierung
+- ❌ **Umwege über Backend:** Vercel Serverless Functions für Login vermeiden
+- ❌ **DEV-Überspringung entfernen:** Ohne diese funktioniert Entwicklung nicht
+
+#### ✅ KORREKTE Verwendung:
+```typescript
+// ✅ NUR diese Methode verwenden:
+const { data, error } = await supabase.auth.signInWithPassword({
+  email, password,
+});
+```
+
+#### 🔧 Konsequenzen bei Fehlern:
+- **404-Fehler:** Bei Verwendung von `/api/auth/login` in Entwicklung
+- **Performance-Einbruch:** Zusätzliche HTTP-Requests unnötig
+- **Komplexität erhöht:** Mehr Fehlerquellen im Stack
+- **Support-Aufwand:** Debugging von API-Route Problemen
+
+#### 📋 Checklist für Entwickler:
+
+- [x] **AuthContext.tsx:** Direkte Supabase-Calls implementiert
+- [x] **Login.tsx:** Funktioniert bereits mit neuer Implementierung
+- [x] **Dokumentation:** Kritische Regel dokumentiert
+- [ ] **Team-Training:** Alle Entwickler über Regel informieren
+- [ ] **Code Reviews:** Neue Auth-Implementierungen prüfen
+
+**💡 MERKSATZ:** Bei Authentication immer direkt den Supabase-Client verwenden. Keine API-Routes, keine HTTP-Calls, keine Umwege!
+
 ### 4. 🌐 Environment Variables
 
 **Datei:** `.env.local`
@@ -239,6 +298,81 @@ TURNSTILE_SECRET_KEY=0x4AAAAAABt7u6j7co-DhiZv3lGHrDwFPe4
 **✅ GELÖST:**
 - Vercel API-Routes funktionieren nicht mit Vite Dev Server
 - **Lösung:** Direkte Supabase Client Authentifizierung
+
+### 5. 🔐 Neue kritische Regel: NUR Supabase Direct Client verwenden!
+
+**🚨 WICHTIGE ÄNDERUNG - 25.08.2025:**
+
+**AB SOFORT GELTEN FOLGENDE REGELN:**
+
+#### ❌ VERBOTEN - Nicht mehr verwenden:
+- ❌ API-Routes für Authentifizierung (`/api/auth/login`, `/api/auth/signup`)
+- ❌ HTTP fetch() Requests an Backend-Routen für Login/Registration
+- ❌ Umwege über Vercel Serverless Functions für Auth
+
+#### ✅ ERFORDERLICH - Nur noch verwenden:
+```typescript
+// ✅ KORREKT - Direkte Supabase Client Calls:
+const { data, error } = await supabase.auth.signInWithPassword({
+  email, password,
+});
+
+const { data, error } = await supabase.auth.signUp({
+  email, password,
+});
+```
+
+#### 🔧 Warum diese Änderung?
+
+1. **Entwicklung funktioniert nicht:** Vite Dev Server kann Vercel API-Routes nicht ausführen
+2. **Komplexität unnötig erhöht:** Direkte Client-Calls sind einfacher und zuverlässiger
+3. **Performance besser:** Keine zusätzlichen HTTP-Requests nötig
+4. **Weniger Fehlerquellen:** Eine Komponente weniger im Stack
+
+#### 📝 Implementierung in AuthContext.tsx:
+```typescript
+// ✅ NEUE signIn METHODE - NUR diese verwenden!
+const signIn = async (email: string, password: string, turnstileToken: string) => {
+  // 1. Turnstile-Verifizierung (DEV: übersprungen, PROD: API-Call)
+  if (import.meta.env.DEV) {
+    console.log('✅ [AuthContext] Skipping Turnstile verification in development mode');
+  }
+
+  // 2. DIREKTER Supabase Call - KEINE API-ROUTE!
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+
+  return { error: null };
+};
+```
+
+#### 🚫 Alte Implementierung (nicht mehr verwenden):
+```typescript
+// ❌ VERBOTEN - Nicht mehr verwenden!
+// Diese Implementierung führt zu 404-Fehlern in Entwicklung
+const response = await fetch('/api/auth/login', {
+  method: 'POST',
+  body: JSON.stringify({ email, password, turnstileToken }),
+});
+```
+
+#### 📋 Migration Checklist für Entwickler:
+
+- [x] **AuthContext.tsx:** Auf direkte Supabase-Calls umgestellt
+- [x] **Login.tsx:** Funktioniert bereits mit neuer Implementierung
+- [x] **SignUp.tsx:** Funktioniert bereits mit neuer Implementierung
+- [ ] **Dokumentation:** Diese Regel in DEVELOPMENT_GUIDE ergänzt
+- [ ] **Team-Kommunikation:** Alle Entwickler über diese Regel informieren
+
+#### 🎯 Konsequenzen bei Nichteinhaltung:
+
+- **Entwicklung funktioniert nicht:** 404-Fehler beim Login
+- **Deployment-Probleme:** Inkonsistente Authentifizierung
+- **Support-Aufwand:** Zusätzliche Debugging-Sessions nötig
+
+**💡 Tipp:** Bei neuen Features immer direkt den Supabase-Client verwenden. Keine API-Routes für Standard-Authentifizierung!
 
 ---
 

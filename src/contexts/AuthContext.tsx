@@ -51,29 +51,57 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const signIn = async (email: string, password: string, turnstileToken: string) => {
-    console.log('AuthContext: Calling backend for sign-in.');
+    console.log('AuthContext: Starting direct Supabase sign-in.');
+
+    // Verify Turnstile token (skip in development mode for testing)
+    if (import.meta.env.DEV) {
+      console.log('✅ [AuthContext] Skipping Turnstile verification in development mode');
+    } else {
+      // Production: Verify Turnstile token via backend API (to avoid CORS issues)
+      try {
+        const response = await fetch('/api/verify-turnstile', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token: turnstileToken }),
+        });
+
+        if (!response.ok) {
+          throw new Error('CAPTCHA verification failed. Please try again.');
+        }
+
+        const data = await response.json();
+        if (!data.success) {
+          throw new Error('CAPTCHA verification failed. Please try again.');
+        }
+
+        console.log('✅ [AuthContext] Turnstile verification successful');
+      } catch (error) {
+        console.error('Error verifying Turnstile token:', error);
+        return { error: error instanceof Error ? error : new Error('CAPTCHA verification failed') };
+      }
+    }
+
+    // Now proceed with direct Supabase sign-in
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, turnstileToken }),
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Sign-in failed.');
-      }
-      
-      const { error } = await supabase.auth.setSession(data.session);
       if (error) {
-          throw error;
+        console.error('Supabase login error:', error.message);
+        return { error };
       }
 
+      if (!data.user) {
+        return { error: new Error('Login failed, no user data returned.') };
+      }
+
+      console.log('✅ [AuthContext] User successfully logged in with Supabase');
       return { error: null };
 
     } catch (error: any) {
-      console.error('AuthContext: Error during signIn fetch:', error);
+      console.error('AuthContext: Error during signIn:', error);
       return { error };
     }
   };
