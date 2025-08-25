@@ -2,13 +2,12 @@ import { createContext, useContext, useEffect, useState, ReactNode } from 'react
 import { supabase } from '@/lib/supabaseClient';
 import type { AuthChangeEvent, Session, User } from '@supabase/supabase-js';
 
-
 interface AuthContextType {
   user: User | null;
   session: Session | null;
   isLoading: boolean;
-  signIn: (email: string, password: string, altchaToken: string) => Promise<{ error: any }>;
-  signUp: (email: string, password: string, altchaToken: string) => Promise<{ error: any }>;
+  signIn: (email: string, password: string, turnstileToken: string) => Promise<{ error: any }>;
+  signUp: (email: string, password: string, turnstileToken: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   setSession: (session: Session | null) => void;
 }
@@ -22,99 +21,117 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     let isMounted = true;
-    let loadingTimeout: NodeJS.Timeout;
+    console.log('AuthContext: Mounting and setting up auth listener.');
 
-    const getSession = async () => {
-      try {
-        console.log('AuthContext: Getting session...');
-        const { data: { session }, error } = await supabase.auth.getSession();
-
-        if (error) {
-          console.error('AuthContext: Error getting session:', error);
-        }
-
-        if (isMounted) {
-          setSession(session);
-          setUser(session?.user ?? null);
-          setIsLoading(false);
-          console.log('AuthContext: Session loaded, user:', session?.user?.email || 'none');
-        }
-      } catch (error) {
-        console.error('AuthContext: Exception getting session:', error);
-        if (isMounted) {
-          setSession(null);
-          setUser(null);
-          setIsLoading(false);
-        }
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (isMounted) {
+        setSession(session);
+        setUser(session?.user ?? null);
+        setIsLoading(false);
+        console.log('AuthContext: Initial session loaded.', session?.user?.email || 'No user.');
       }
-    };
+    });
 
-    // Start loading session
-    getSession();
-
-    // Set up auth state change listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_event: AuthChangeEvent, session: Session | null) => {
         if (isMounted) {
-          console.log('AuthContext: Auth state changed, user:', session?.user?.email || 'none');
+          console.log('AuthContext: Auth state changed.', session?.user?.email || 'No user.');
           setSession(session);
           setUser(session?.user ?? null);
-          setIsLoading(false); // Ensure loading is set to false on auth state changes
+          setIsLoading(false);
         }
       }
     );
 
-    // Add timeout to prevent infinite loading - set after initial session load
-    loadingTimeout = setTimeout(() => {
-      if (isMounted && isLoading) {
-        console.warn('AuthContext: Loading timeout reached, forcing completion');
-        setIsLoading(false);
-      }
-    }, 5000); // Reduced to 5 second timeout
-
     return () => {
       isMounted = false;
-      if (subscription) {
-        subscription.unsubscribe();
-      }
-      if (loadingTimeout) {
-        clearTimeout(loadingTimeout);
-      }
+      subscription.unsubscribe();
+      console.log('AuthContext: Unmounted and unsubscribed from auth listener.');
     };
-  }, [isLoading]); // Added isLoading as dependency to handle timeout properly
+  }, []);
 
-  const signIn = async (email: string, password: string, altchaToken: string) => {
-    const verifyResponse = await fetch('/api/verify-altcha', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ challenge: altchaToken }),
-    });
+  const signIn = async (email: string, password: string, turnstileToken: string) => {
+    console.log('AuthContext: Calling backend for sign-in.');
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password, turnstileToken }),
+      });
 
-    if (!verifyResponse.ok) {
-      const errorData = await verifyResponse.json();
-      throw new Error(errorData.message || 'ALTCHA verification failed.');
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Sign-in failed.');
+      }
+      
+      const { error } = await supabase.auth.setSession(data.session);
+      if (error) {
+          throw error;
+      }
+
+      return { error: null };
+
+    } catch (error: any) {
+      console.error('AuthContext: Error during signIn fetch:', error);
+      return { error };
     }
-
-    return supabase.auth.signInWithPassword({ email, password });
   };
 
-  const signUp = async (email: string, password: string, altchaToken: string) => {
-    const verifyResponse = await fetch('/api/verify-altcha', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ challenge: altchaToken }),
-    });
+  const signUp = async (email: string, password: string, turnstileToken: string) => {
+    console.log('AuthContext: Starting sign-up with Supabase client.');
 
-    if (!verifyResponse.ok) {
-      const errorData = await verifyResponse.json();
-      throw new Error(errorData.message || 'ALTCHA verification failed.');
+    // Verify Turnstile token (skip in development mode for testing)
+    if (import.meta.env.DEV) {
+      console.log('✅ [AuthContext] Skipping Turnstile verification in development mode');
+    } else {
+      // Production: Verify Turnstile token via backend API (to avoid CORS issues)
+      try {
+        const response = await fetch('/api/verify-turnstile', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token: turnstileToken }),
+        });
+
+        if (!response.ok) {
+          throw new Error('CAPTCHA verification failed. Please try again.');
+        }
+
+        const data = await response.json();
+        if (!data.success) {
+          throw new Error('CAPTCHA verification failed. Please try again.');
+        }
+
+        console.log('✅ [AuthContext] Turnstile verification successful');
+      } catch (error) {
+        console.error('Error verifying Turnstile token:', error);
+        return { error: error instanceof Error ? error : new Error('CAPTCHA verification failed') };
+      }
     }
 
-    return supabase.auth.signUp({ email, password });
+    // Now proceed with direct Supabase sign-up
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+
+      if (error) {
+        console.error('Supabase signup error:', error);
+        return { error };
+      }
+
+      if (!data.user) {
+        return { error: new Error('Signup failed, no user data returned.') };
+      }
+
+      console.log('✅ [AuthContext] User successfully signed up with Supabase');
+      return { error: null };
+
+    } catch (error: any) {
+      console.error('AuthContext: Error during signUp:', error);
+      return { error };
+    }
   };
 
   const signOut = async () => {

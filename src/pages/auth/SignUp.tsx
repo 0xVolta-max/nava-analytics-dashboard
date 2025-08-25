@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { showError, showSuccess } from '@/utils/toast';
-import AltchaWidget from '@/components/AltchaWidget';
+import TurnstileWidget from '@/components/TurnstileWidget';
 import SafyLogo from '@/assets/logo.svg?react';
 
 const SignUpPage = () => {
@@ -15,68 +15,86 @@ const SignUpPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [altchaToken, setAltchaToken] = useState<string | null>(null);
-  const [altchaError, setAltchaError] = useState<string | null>(null);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [turnstileError, setTurnstileError] = useState<string | null>(null);
 
-  const handleAltchaVerified = (token: string) => {
-    setAltchaToken(token);
-    setAltchaError(null);
-    console.log('Altcha verification successful');
-  };
+  const handleTurnstileVerified = useCallback((token: string) => {
+    console.log('🎯 [SIGNUP] Turnstile verification successful, token received:', token.substring(0, 20) + '...');
+    setTurnstileToken(token);
+    setTurnstileError(null);
+  }, []);
 
-  const handleAltchaError = (error: string) => {
-    setAltchaError(error);
-    setAltchaToken(null);
+  const handleTurnstileError = useCallback((error: string) => {
+    console.error('❌ [SIGNUP] Turnstile error:', error);
+    setTurnstileError(error);
+    setTurnstileToken(null);
     showError(`Bot verification failed: ${error}`);
-  };
+  }, []);
+
+  const handleTurnstileExpired = useCallback(() => {
+    console.log('⏰ [SIGNUP] Turnstile token expired');
+    setTurnstileToken(null);
+  }, []);
+
+  const handleTurnstileReset = useCallback(() => {
+    console.log('🔄 [SIGNUP] Turnstile widget reset');
+    setTurnstileToken(null);
+    setTurnstileError(null);
+  }, []);
 
   const handleSignUp = async (e: React.FormEvent) => {
-    // CRITICAL: Prevent any form submission that could cause page reload
     e.preventDefault();
     e.stopPropagation();
 
-    console.log('Signup form submitted, preventing default behavior');
+    console.log('📋 [SIGNUP] Form submitted');
 
     if (password.length < 8) {
       showError('Password must be at least 8 characters long.');
       return;
     }
 
-    if (!altchaToken) {
+    if (!turnstileToken) {
+      console.error('❌ [SIGNUP] No turnstile token available');
       showError('Please complete the bot verification.');
       return;
     }
+    
+    console.log('✅ [SIGNUP] Token verified, proceeding with signup...');
 
     setIsLoading(true);
 
     try {
-      const { error } = await signUp(email, password, altchaToken);
+      // The signUp function from AuthContext should handle the backend call
+      // including the turnstile token verification.
+      const { error } = await signUp(email, password, turnstileToken);
 
       if (error) {
-        console.error('Signup error:', error);
-        // Handle specific Supabase errors
+        console.error('❌ [SIGNUP] Signup error:', error);
         if (error.message.includes('User already registered')) {
           throw new Error('An account with this email already exists. Please try logging in instead.');
         } else if (error.message.includes('Password should be at least 6 characters')) {
-          throw new Error('Password must be at least 6 characters long.');
+          // This check is illustrative; Supabase default is 6, we enforce 8 on the client.
+          throw new Error('Password must be at least 8 characters long.');
         } else if (error.message.includes('Unable to validate email address')) {
           throw new Error('Please enter a valid email address.');
         }
         throw error;
       }
 
-      console.log('Signup successful, showing success message');
+      console.log('✅ [SIGNUP] Signup successful, showing success message');
       showSuccess('Account created successfully! Please check your email for confirmation.');
 
       // Clear form data
       setEmail('');
       setPassword('');
-      setAltchaToken(null);
-      setAltchaError(null);
+      setTurnstileToken(null);
+      setTurnstileError(null);
 
+      // Note: User will need to confirm email before they can sign in
+      // Navigation to login is fine, they can check email there
       navigate('/login');
     } catch (error: any) {
-      console.error('Signup failed:', error);
+      console.error('❌ [SIGNUP] Signup failed:', error);
       showError(error.message || 'Signup failed. Please try again.');
     } finally {
       setIsLoading(false);
@@ -123,16 +141,18 @@ const SignUpPage = () => {
               />
             </div>
 
-            {/* Altcha Bot Protection - Robust Integration */}
+            {/* Bot Protection - Cloudflare Turnstile */}
             <div className="space-y-2">
               <Label className="text-sm text-white/80">Bot Protection</Label>
               <div className="min-h-[65px]">
-                <AltchaWidget
-                  onVerified={handleAltchaVerified}
-                  onError={handleAltchaError}
+                <TurnstileWidget
+                  onVerified={handleTurnstileVerified}
+                  onError={handleTurnstileError}
+                  onExpired={handleTurnstileExpired}
+                  onReset={handleTurnstileReset}
                 />
               </div>
-              {altchaError && (
+              {turnstileError && (
                 <div className="p-3 bg-yellow-500/20 border border-yellow-500/30 rounded-md">
                   <div className="flex items-center space-x-2 text-yellow-400">
                     <div className="w-4 h-4 bg-yellow-500 rounded-full flex items-center justify-center">

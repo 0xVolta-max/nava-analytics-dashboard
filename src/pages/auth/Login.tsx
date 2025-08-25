@@ -8,10 +8,9 @@ import { Label } from '@/components/ui/label';
 import { showError, showSuccess } from '@/utils/toast';
 import TurnstileWidget from '@/components/TurnstileWidget';
 import SafyLogo from '@/assets/logo.svg?react';
-import { supabase } from '@/lib/supabaseClient';
 
 const LoginPage = () => {
-  const { setSession, user } = useAuth();
+  const { signIn, user } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -44,59 +43,32 @@ const LoginPage = () => {
   }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
-    // CRITICAL: Prevent any form submission that could cause page reload
     e.preventDefault();
     e.stopPropagation();
 
     console.log('📋 [LOGIN] Form submitted');
-    console.log('🔑 [LOGIN] Current turnstileToken:', turnstileToken ? turnstileToken.substring(0, 20) + '...' : 'NULL');
-
     if (!turnstileToken) {
       console.error('❌ [LOGIN] No turnstile token available');
       showError('Please complete the bot verification.');
       return;
     }
 
-    console.log('✅ [LOGIN] Token verified, proceeding with login...');
-
+    console.log('✅ [LOGIN] Token available, proceeding with login via AuthContext...');
     setIsLoading(true);
 
     try {
-      console.log('🚀 [SUPABASE] Attempting direct Supabase login...');
-      
-      // Direkte Supabase Authentifizierung
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      const { error } = await signIn(email, password, turnstileToken);
 
       if (error) {
-        console.error('❌ [SUPABASE] Login error:', error);
-        throw new Error(error.message);
+        throw error;
       }
 
-      if (!data.session) {
-        throw new Error('No session returned from Supabase');
-      }
-
-      console.log('✅ [SUPABASE] Login successful, session:', data.session.user?.email);
-      
-      // Session wird automatisch durch AuthContext verwaltet
-      // setSession(data.session); // Das macht der AuthContext automatisch
-      
-      showSuccess('Login successful! ✅');
-
-      // Clear form data
-      setEmail('');
-      setPassword('');
-      setTurnstileToken(null);
-      setTurnstileError(null);
-
-      console.log('🎯 [LOGIN] Form cleared, navigation should happen via AuthContext');
+      showSuccess('Login successful! Redirecting...');
+      // Navigation will be handled by the useEffect watching the user state.
 
     } catch (error: any) {
-      console.error('❌ [SUPABASE] Login failed:', error);
-      showError(error.message || 'Login failed. Please try again.');
+      console.error('❌ [LOGIN] Login failed:', error);
+      showError(error.message || 'Login failed. Please check your credentials and try again.');
     } finally {
       setIsLoading(false);
     }

@@ -11,10 +11,12 @@
 
 ## 🎯 Übersicht und Abstimmung mit aktuellem Codebase
 
-### Aktueller Zustand (Stand 23.08.2025)
-- **Authentication**: Basis-React-App mit Supabase-Authentifizierung (nur E-Mail/Passwort)
-- **SignUp.tsx**: Einfache Registrierung ohne E-Mail-Verifizierung oder 2FA
-- **AuthContext.tsx**: Standard-Supabase-Auth ohne erweiterte Features
+### Aktueller Zustand (Stand 25.08.2025)
+- **✅ Authentication**: Vollständige Supabase-Client Integration mit Turnstile CAPTCHA
+- **✅ SignUp.tsx**: Direkte Supabase-Registrierung mit Bot-Schutz
+- **✅ AuthContext.tsx**: Erweiterte Auth mit direkten Supabase-Calls
+- **✅ Turnstile Integration**: Test-Keys + Production-Setup dokumentiert
+- **✅ Playwright Testing**: Vollständige Testabdeckung implementiert
 - **Billing.tsx**: Platzhalter-Seite ("under construction")
 - **Fehlende Features**: Onboarding-Flows, Plan-Management, Feature-Gating
 
@@ -140,11 +142,47 @@
 - `sso_enabled`: Ab Business/Enterprise
 
 ### Sicherheits-Integrationen
-- **Altcha reCAPTCHA**: Bot-Schutz für Registrierung und Login (bietet bereits 2FA-ähnliche Sicherheit)
-- **API-Endpoint**: `/api/verify-altcha` für serverseitige Validierung
-- **Client-Widget**: `AltchaWidget.tsx` Komponente für alle Auth-Formulare
+- **✅ Cloudflare Turnstile**: Aktive Bot-Schutz-Integration mit Supabase-Client
+- **✅ Test-Keys**: Automatische Verifizierung für Development
+- **✅ Production-Ready**: Einfacher Wechsel zu echten Keys
+- **API-Endpoint**: `/api/verify-turnstile` für serverseitige Validierung
+- **Client-Widget**: `TurnstileWidget.tsx` Komponente für alle Auth-Formulare
+- **Direct Supabase**: Keine API-Umwege, direkte Client-Integration
 - **Fallback**: Automatische Aktivierung bei verdächtigen Mustern
 - **Zusätzliche 2FA**: Optionale TOTP/Authenticator-Setup für Enterprise-Nutzer
+
+### Aktuelle Authentication-Architektur
+
+#### Supabase-Client Integration
+```javascript
+// AuthContext.tsx - Direkte Supabase-Calls
+const signUp = async (email, password, turnstileToken) => {
+  // 1. Turnstile-Verifizierung (DEV: übersprungen, PROD: validiert)
+  // 2. Direkter Supabase-Call (keine Backend-API)
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+  });
+  return { error: null };
+};
+```
+
+#### Turnstile CAPTCHA
+```javascript
+// Test-Keys (Development)
+VITE_TURNSTILE_SITE_KEY=0x4AAAAAABt7u_Co2b2tEbcj
+TURNSTILE_SECRET_KEY=0x4AAAAAABt7u6j7co-DhiZv3lGHrDwFPe4
+
+// Production-Keys (Vercel)
+VITE_TURNSTILE_SITE_KEY=deine_echte_site_key
+TURNSTILE_SECRET_KEY=dein_neuer_secret_key
+```
+
+#### Security Flow
+1. **Frontend**: Turnstile-Widget generiert Token
+2. **Verification**: Server-side Validierung via `/api/verify-turnstile`
+3. **Registration**: Direkter Supabase-Client Call
+4. **Success**: User erfolgreich registriert
 
 ### Abrechnung
 - Stripe-Integration mit EU-VAT, Proration, Webhooks

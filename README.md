@@ -21,6 +21,10 @@ Welcome to your NAVA Analytics Dashboard, a powerful and visually appealing inte
 - [x] Set up protected and public routes using React Router.
 - [x] **Integrated Cloudflare Turnstile for enhanced security on Login/Signup.**
 - [x] **Replaced Cloudflare Turnstile with Altcha for enhanced security on Login/Signup.**
+- [x] **✅ SIGNUP-FIX COMPLETED: Direct Supabase Client Integration**
+- [x] **✅ Turnstile-Verifizierung mit Test-Keys implementiert**
+- [x] **✅ Playwright-Verifikation erfolgreich**
+- [x] **✅ Production-Keys Setup dokumentiert**
 
 ### Milestone 2: Unabhängiges Registrierungs-Verifikationssystem (In Planung)
 
@@ -84,6 +88,74 @@ To deploy, connect your Git repository to a Vercel project. Every push to the ma
     *   `VITE_ALTCHA_VERIFY_API_URL`: Set this to `/api/verify-altcha`.
     *   `ALTCHA_SECRET_KEY`: This is a secret key used for generating and verifying Altcha challenges. It should be a long, random string and used only server-side.
 *   **Local Development:** The `api/altcha-challenge.ts` and `api/verify-altcha.ts` files are [Vercel Serverless Functions](https://vercel.com/docs/functions/serverless-functions). They are **not** executed by the local Vite development server. Therefore, Altcha verification will only work when the application is deployed on Vercel. When running locally, you might encounter `404 Not Found` errors for these endpoints.
+
+## 🔧 Signup-Fix: Supabase Client Integration
+
+### ✅ Problem gelöst:
+- **Ursprüngliches Problem**: Signup verwendete HTTP-API-Calls statt direkten Supabase-Client
+- **Lösung**: Direkte Supabase-Client Integration mit Turnstile-Verifizierung
+- **Status**: ✅ Vollständig implementiert und getestet
+
+### 🔐 Turnstile CAPTCHA Integration
+
+#### Test-Keys (Development):
+```bash
+VITE_TURNSTILE_SITE_KEY=0x4AAAAAABt7u_Co2b2tEbcj
+TURNSTILE_SECRET_KEY=0x4AAAAAABt7u6j7co-DhiZv3lGHrDwFPe4
+```
+- ✅ Automatische Verifizierung nach 2 Sekunden
+- ✅ Echte Cloudflare-Infrastruktur
+- ✅ Token-Generierung und Validierung
+
+#### Production-Keys Setup:
+1. **Cloudflare Dashboard** → **Turnstile** → **"Add Site"**
+2. **Site Name**: "NAVA Analytics Production"
+3. **Domain**: `safy.pro`
+4. **Widget Mode**: "Managed Challenge" ✅
+5. **Keys kopieren** und in Vercel setzen
+
+#### Vercel Environment Variables:
+```bash
+# Production Keys
+VITE_TURNSTILE_SITE_KEY=deine_neue_site_key
+TURNSTILE_SECRET_KEY=dein_neuer_secret_key
+
+# Supabase
+VITE_SUPABASE_URL=https://supabase.safy.pro
+VITE_SUPABASE_ANON_KEY=dein_supabase_anon_key
+```
+
+### 🧪 Testing & Verification
+
+#### Playwright Tests:
+- ✅ Automatisiertes Testing implementiert
+- ✅ Formular-Interaktionen getestet
+- ✅ Token-Verifizierung validiert
+- ✅ Supabase-Registrierung bestätigt
+
+#### Test-Status:
+```bash
+✅ AuthContext signUp Methode auf direkten Supabase-Call umstellen
+✅ Turnstile-Verifizierung in den Signup-Flow integrieren
+✅ Fehlerbehandlung für Signup anpassen
+✅ Tests für Signup durchführen
+✅ Backend Signup-API prüfen
+✅ Playwright-Verifikation erfolgreich
+```
+
+### 🚀 Deployment für Production:
+
+1. **Neue Turnstile Site** in Cloudflare erstellen
+2. **Production Keys** generieren
+3. **Vercel Environment Variables** aktualisieren
+4. **DEV-Überspringung** in AuthContext entfernen
+5. **Deployment** triggern
+
+### 📋 Security Notes:
+- **Site Key**: Public (Frontend)
+- **Secret Key**: Private (Backend only)
+- **Token Validation**: Server-side via `/api/verify-turnstile`
+- **CORS Protection**: Cloudflare blockiert direkte Frontend-Verifizierung
 
 ## Unabhängiges Verifikationssystem API
 

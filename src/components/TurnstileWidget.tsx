@@ -58,15 +58,9 @@ const TurnstileWidget: React.FC<TurnstileWidgetProps> = ({
       return;
     }
 
-    // Check if script already exists
-    if (document.querySelector('script[src*="turnstile"]') && window.turnstile) {
-      console.log('✅ [STABLE] Script already loaded, initializing directly');
-      initializeWidget();
-      return;
-    }
-
-    // Create unique callback name
+    // Create unique callback names FIRST (before any initialization)
     const callbackName = `turnstileCallback_${++callbackCounter}`;
+    const errorCallbackName = `turnstileError_${callbackCounter}`;
     callbackNameRef.current = callbackName;
 
     // Set up global callbacks using refs for stable execution
@@ -86,7 +80,6 @@ const TurnstileWidget: React.FC<TurnstileWidgetProps> = ({
       }
     };
 
-    const errorCallbackName = `turnstileError_${callbackCounter}`;
     window[errorCallbackName] = (error: string) => {
       console.error('❌ [STABLE] Turnstile error:', error);
       if (mounted && onErrorRef.current) {
@@ -109,7 +102,9 @@ const TurnstileWidget: React.FC<TurnstileWidgetProps> = ({
       const siteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY;
       if (!siteKey || siteKey === 'DEIN_CLOUDFLARE_TURNSTILE_SITE_KEY') {
         console.error('❌ [STABLE] Invalid site key');
-        onError('Invalid configuration');
+        if (onErrorRef.current) {
+          onErrorRef.current('Invalid configuration');
+        }
         return;
       }
 
@@ -160,8 +155,17 @@ const TurnstileWidget: React.FC<TurnstileWidgetProps> = ({
       } catch (error) {
         console.error('❌ [STABLE] Widget render failed:', error);
         setIsLoading(false);
-        onError('Widget initialization failed');
+        if (onErrorRef.current) {
+          onErrorRef.current('Widget initialization failed');
+        }
       }
+    }
+
+    // Check if script already exists and initialize directly
+    if (document.querySelector('script[src*="turnstile"]') && window.turnstile) {
+      console.log('✅ [STABLE] Script already loaded, initializing directly');
+      initializeWidget();
+      return;
     }
 
     // Load script only if not already loading
@@ -207,7 +211,7 @@ const TurnstileWidget: React.FC<TurnstileWidgetProps> = ({
       // Clean up global callbacks
       if (callbackNameRef.current) {
         delete window[callbackNameRef.current];
-        delete window[errorCallbackName];
+        delete window[`turnstileError_${callbackCounter}`];
       }
     };
   }, []); // EMPTY DEPENDENCIES - run only once on mount

@@ -13,7 +13,7 @@ if (!supabaseUrl || !serviceRoleKey || !turnstileSecretKey) {
 const supabase = createClient(supabaseUrl, serviceRoleKey);
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  // Set CORS headers for preflight requests
+  // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -24,13 +24,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
-    return res.status(405).json({ error: 'Method Not Allowed' });
+    return res.status(405).json({ message: 'Method Not Allowed' });
   }
 
   const { email, password, turnstileToken } = req.body;
 
   if (!email || !password || !turnstileToken) {
-    return res.status(400).json({ error: 'Email, password, and turnstileToken are required.' });
+    return res.status(400).json({ message: 'Email, password, and turnstileToken are required.' });
   }
 
   // 1. Verify Turnstile token
@@ -53,28 +53,29 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(401).json({ message: 'CAPTCHA verification failed. Please try again.' });
     }
 
-    console.log('✅ [API/LOGIN] Turnstile verification successful');
+    console.log('✅ [API/SIGNUP] Turnstile verification successful');
   } catch (error) {
     console.error('Error verifying Turnstile token:', error);
     return res.status(500).json({ message: 'An error occurred during CAPTCHA verification.' });
   }
 
-  // 2. Authenticate with Supabase
-  const { data, error } = await supabase.auth.signInWithPassword({
+  // 2. Sign up user with Supabase
+  const { data, error } = await supabase.auth.signUp({
     email,
     password,
   });
 
   if (error) {
-    console.error('Supabase login error:', error.message);
-    return res.status(401).json({ message: error.message });
+    console.error('Supabase signup error:', error.message);
+    return res.status(400).json({ message: error.message });
   }
 
-  if (!data.session) {
-      return res.status(401).json({ message: 'Authentication failed, no session returned.' });
+  // Supabase returns a user object on successful sign-up, but the session is null until email confirmation.
+  if (!data.user) {
+    return res.status(500).json({ message: 'Signup failed, no user data returned.' });
   }
 
-  // 3. Return session data
-  console.log(`✅ [API/LOGIN] User ${email} successfully logged in.`);
-  return res.status(200).json({ session: data.session });
+  // 3. Return success message
+  console.log(`✅ [API/SIGNUP] User ${email} successfully signed up. Waiting for email confirmation.`);
+  return res.status(200).json({ message: 'Signup successful. Please check your email to confirm your account.', user: data.user });
 }
